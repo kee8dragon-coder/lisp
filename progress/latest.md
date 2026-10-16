@@ -1,8 +1,8 @@
 # Latest automation run
 
-### 2026-10-16 10:33 UTC - Applied a lesson
+### 2026-10-16 10:52 UTC - Applied a lesson
 
-- Lesson: L004 - Small animal taxonomy
+- Lesson: L005 - Property inheritance
 - Result: Validated: the knowledge base loaded in SBCL and inference reached a fixpoint.
-- Knowledge now: 8 rules, 10 given facts, 28 facts after inference
+- Knowledge now: 9 rules, 13 given facts, 39 facts after inference
 

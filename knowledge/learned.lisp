@@ -21,3 +21,10 @@
 (fact (is-a sparrow bird))
 (fact (is-a bird animal))
 (rule is-a-transitive (if (is-a ?x ?y) (is-a ?y ?z)) (then (is-a ?x ?z)))
+
+;; --- L005: Property inheritance (applied 2026-10-16 10:52 UTC) ---
+;; Things inherit properties from the categories they belong to.
+(fact (has animal cells))
+(fact (has mammal fur))
+(fact (has bird feathers))
+(rule inherit-property (if (is-a ?x ?y) (has ?y ?p)) (then (has ?x ?p)))

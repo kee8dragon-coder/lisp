@@ -1,6 +1,9 @@
 ;;;; Written by the automation. Delete this file to reset progress.
-(:APPLIED ("L001" "L002" "L003" "L004") :FAILED NIL :RUNS 4 :LOG
- ((:TIME "2026-10-16 10:33 UTC" :STATUS :APPLIED :LESSON "L004" :TITLE "Small animal taxonomy"
+(:APPLIED ("L001" "L002" "L003" "L004" "L005") :FAILED NIL :RUNS 5 :LOG
+ ((:TIME "2026-10-16 10:52 UTC" :STATUS :APPLIED :LESSON "L005" :TITLE "Property inheritance" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 9 :GIVEN 13 :TOTAL 39))
+  (:TIME "2026-10-16 10:33 UTC" :STATUS :APPLIED :LESSON "L004" :TITLE "Small animal taxonomy"
    :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 8 :GIVEN 10 :TOTAL 28))
   (:TIME "2026-10-16 10:32 UTC" :STATUS :APPLIED :LESSON "L003" :TITLE "Aunt or uncle (pibling)"
