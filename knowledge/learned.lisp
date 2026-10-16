@@ -8,3 +8,7 @@
 ;; --- L002: Grandchild relation (applied 2026-10-16 10:32 UTC) ---
 ;; The inverse of grandparent.
 (rule grandchild-rule (if (grandparent ?x ?y)) (then (grandchild ?y ?x)))
+
+;; --- L003: Aunt or uncle (pibling) (applied 2026-10-16 10:32 UTC) ---
+;; A sibling of someone's parent. Depends on the sibling rule from L001.
+(rule pibling-rule (if (sibling ?s ?p) (parent ?p ?c)) (then (pibling ?s ?c)))
