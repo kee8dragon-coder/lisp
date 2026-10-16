@@ -1,0 +1,114 @@
+name: autoevolve
+
+on:
+  schedule:
+    - cron: "17 2 * * *"   # daily 02:17 UTC; GitHub may delay scheduled runs
+  workflow_dispatch:        # manual runs always allowed
+
+permissions:
+  contents: write           # push to the autoevolve branch; nothing else
+
+concurrency:
+  group: autoevolve
+  cancel-in-progress: false
+
+jobs:
+  evolve:
+    # Scheduled runs happen only when the repository variable AUTOEVOLVE_ENABLED is 'true'.
+    if: github.event_name == 'workflow_dispatch' || vars.AUTOEVOLVE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Switch to the autoevolve branch
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --heads origin autoevolve > /dev/null 2>&1; then
+            git checkout -B autoevolve origin/autoevolve
+          else
+            git checkout -B autoevolve
+          fi
+
+      - name: Install SBCL
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq sbcl
+          sbcl --version
+
+      - name: Run one evolution step
+        env:
+          SAI_MODE: evolve
+        run: sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp
+
+      - name: Guard - only allowlisted files may have changed
+        run: |
+          set -euo pipefail
+          bad=0
+          while IFS= read -r path; do
+            case "$path" in
+              knowledge/learned.lisp|PROGRESS.md|progress/*) ;;
+              *) echo "::error::Change outside the allowlist: $path"; bad=1 ;;
+            esac
+          done < <(git status --porcelain --untracked-files=all | cut -c4-)
+          exit "$bad"
+
+      - name: Read run status
+        id: evolved
+        run: echo "status=$(tr -cd 'a-z' < progress/latest-status.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Validate in a fresh SBCL process
+        id: validate
+        continue-on-error: true
+        env:
+          SAI_MODE: validate
+        run: sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp
+
+      - name: Discard the change and record the failure
+        if: steps.validate.outcome == 'failure' && steps.evolved.outputs.status == 'applied'
+        env:
+          SAI_MODE: record-failure
+        run: |
+          set -euo pipefail
+          git checkout -- .
+          git clean -fdq -- progress knowledge PROGRESS.md
+          sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp
+
+      - name: Read final status
+        id: final
+        run: echo "status=$(tr -cd 'a-z' < progress/latest-status.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and push to autoevolve (never to the default branch)
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add knowledge/learned.lisp PROGRESS.md progress
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+          else
+            git commit -m "autoevolve: run ${{ github.run_number }}"
+            git push origin HEAD:refs/heads/autoevolve
+          fi
+
+      - name: Write job summary
+        run: |
+          {
+            echo "## autoevolve"
+            echo
+            cat progress/latest.md
+            echo
+            echo "Review the branch: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/autoevolve"
+            echo "Plain-language overview: PROGRESS.md on the autoevolve branch."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail the job if the run was not successful
+        if: steps.final.outputs.status == 'failed' || steps.final.outputs.status == 'blocked'
+        env:
+          STATUS: ${{ steps.final.outputs.status }}
+        run: |
+          echo "::error::autoevolve finished with status '$STATUS'. See PROGRESS.md on the autoevolve branch."
+          exit 1
