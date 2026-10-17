@@ -21,6 +21,12 @@
 ;;;;   PROGRESS.md, progress/*. Lessons live in this file, so adding lessons means
 ;;;;   editing this file on your main branch.
 ;;;;
+;;;; DIRECTION
+;;;;   Loosely modelled on a JARVIS-style assistant: it knows about rooms and
+;;;;   devices, system status, schedules, people and permissions, makes
+;;;;   suggestions, and can always explain why. Lessons are ordered so those
+;;;;   assistant skills arrive early (L010 onward).
+;;;;
 ;;;; ROADMAP (small steps, tests and Python/neural parts deferred by choice)
 ;;;;   1 Engine: index facts by predicate; numeric built-ins; negation as failure
 ;;;;     (stratified); retraction with dependent facts.
@@ -327,7 +333,430 @@ Returns (values new-facts reason): :fixpoint, :round-limit or :fact-limit."
      :why "Children of two siblings are cousins."
      :forms ((rule cousin-rule
                (if (parent ?p1 ?a) (parent ?p2 ?b) (sibling ?p1 ?p2))
-               (then (cousin ?a ?b)))))))
+               (then (cousin ?a ?b)))))
+
+    ;; ---- Generic rules that work on any relation named in the facts ----
+
+    (:id "L007" :title "Generic transitivity"
+     :why "Any relation declared with transitive-relation is chained automatically (a to b and b to c gives a to c)."
+     :forms ((rule generic-transitive-rule
+               (if (transitive-relation ?r) (?r ?a ?b) (?r ?b ?c))
+               (then (?r ?a ?c)))))
+
+    (:id "L008" :title "Generic symmetry"
+     :why "Any relation declared with symmetric-relation works in both directions."
+     :forms ((rule generic-symmetric-rule
+               (if (symmetric-relation ?r) (?r ?a ?b))
+               (then (?r ?b ?a)))))
+
+    (:id "L009" :title "Generic inverse"
+     :why "inverse-relation facts such as (inverse-relation depends-on prerequisite-of) create the reverse relation automatically."
+     :forms ((rule generic-inverse-rule
+               (if (inverse-relation ?r ?s) (?r ?a ?b))
+               (then (?s ?b ?a)))))
+
+    ;; ---- Assistant skills: rooms, devices, status, schedule, permissions ----
+
+    (:id "L010" :title "Rooms and devices"
+     :why "Starter home model: which devices are in which rooms, and what kind each one is."
+     :forms ((fact (device-in lamp-1 lounge))
+             (fact (device-in lamp-2 study))
+             (fact (device-in heater lounge))
+             (fact (device-in speaker-1 study))
+             (fact (device-type lamp-1 light))
+             (fact (device-type lamp-2 light))
+             (fact (device-type heater climate))
+             (fact (device-type speaker-1 audio))
+             (rule room-contains-rule
+               (if (device-in ?d ?r))
+               (then (room-contains ?r ?d)))))
+
+    (:id "L011" :title "Device lookups"
+     :why "Answers what kinds of device a room has and which lights are in which room."
+     :forms ((rule room-has-type-rule
+               (if (device-in ?d ?r) (device-type ?d ?t))
+               (then (room-has-type ?r ?t)))
+             (rule light-in-rule
+               (if (device-in ?d ?r) (device-type ?d light))
+               (then (light-in ?d ?r)))))
+
+    (:id "L012" :title "Presence and lights"
+     :why "Knows who is in which room and suggests turning on the lights where someone is; explain shows why."
+     :forms ((fact (at ana study))
+             (fact (at ben lounge))
+             (rule occupied-rule
+               (if (at ?p ?r))
+               (then (occupied ?r)))
+             (rule suggest-light-rule
+               (if (at ?p ?r) (light-in ?d ?r))
+               (then (suggest turn-on ?d)))))
+
+    (:id "L013" :title "Preferences"
+     :why "Uses what people prefer to suggest playing music for one person and muting the speaker for another."
+     :forms ((fact (prefers ana quiet))
+             (fact (prefers ben music))
+             (fact (device-in speaker-2 lounge))
+             (fact (device-type speaker-2 audio))
+             (rule suggest-music-rule
+               (if (at ?p ?r) (prefers ?p music) (device-in ?d ?r) (device-type ?d audio))
+               (then (suggest play-music ?d)))
+             (rule suggest-mute-rule
+               (if (at ?p ?r) (prefers ?p quiet) (device-in ?d ?r) (device-type ?d audio))
+               (then (suggest mute ?d)))))
+
+    (:id "L014" :title "System components"
+     :why "Which parts of a system need which other parts; chains are followed using the generic transitivity rule."
+     :forms ((fact (needs cooling power))
+             (fact (needs compute power))
+             (fact (needs compute cooling))
+             (fact (needs network power))
+             (fact (needs assistant compute))
+             (fact (needs assistant network))
+             (fact (transitive-relation needs))))
+
+    (:id "L015" :title "Status and failures"
+     :why "A demo status report: when a component is down, everything that needs it is marked degraded, and explain shows the chain."
+     :forms ((fact (status power ok))
+             (fact (status cooling ok))
+             (fact (status compute ok))
+             (fact (status network down))
+             (rule failing-rule
+               (if (status ?c down))
+               (then (failing ?c)))
+             (rule degraded-rule
+               (if (status ?c down) (needs ?s ?c))
+               (then (degraded ?s)))))
+
+    (:id "L016" :title "Alerts"
+     :why "Turns failures into critical alerts and degraded systems into warnings."
+     :forms ((rule alert-failing-rule
+               (if (failing ?c))
+               (then (alert ?c critical)))
+             (rule alert-degraded-rule
+               (if (degraded ?s))
+               (then (alert ?s warning)))))
+
+    (:id "L017" :title "Calendar"
+     :why "Events, their time slots, and who attends; works out when each person is busy."
+     :forms ((fact (scheduled standup mon-9))
+             (fact (scheduled review mon-9))
+             (fact (scheduled lunch mon-12))
+             (fact (attends ana standup))
+             (fact (attends ana review))
+             (fact (attends ben standup))
+             (fact (attends ben lunch))
+             (rule busy-rule
+               (if (attends ?p ?e) (scheduled ?e ?t))
+               (then (busy ?p ?t)))))
+
+    (:id "L018" :title "Schedule clashes"
+     :why "Flags a person who attends two different events in the same time slot."
+     :forms ((rule clash-rule
+               (if (attends ?p ?a) (attends ?p ?b) (scheduled ?a ?t) (scheduled ?b ?t) (different ?a ?b))
+               (then (clash ?p ?a ?b)))))
+
+    (:id "L019" :title "Roles and permissions"
+     :why "Who holds which role and what each role allows, so the assistant can say who may do what."
+     :forms ((fact (user-role ana admin))
+             (fact (user-role ben editor))
+             (fact (user-role cai viewer))
+             (fact (role-grants admin manage))
+             (fact (role-grants editor edit))
+             (fact (role-grants viewer view))
+             (rule permission-rule
+               (if (user-role ?u ?r) (role-grants ?r ?p))
+               (then (permitted ?u ?p)))))
+
+    (:id "L020" :title "Role hierarchy"
+     :why "Higher roles inherit everything lower roles are allowed to do."
+     :forms ((fact (role-inherits admin editor))
+             (fact (role-inherits editor viewer))
+             (fact (transitive-relation role-inherits))
+             (rule role-inherits-grants-rule
+               (if (role-inherits ?r ?s) (role-grants ?s ?p))
+               (then (role-grants ?r ?p)))))
+
+    (:id "L021" :title "Task dependencies"
+     :why "Which tasks depend on which; indirect dependencies and the reverse relation are derived automatically."
+     :forms ((fact (depends-on test build))
+             (fact (depends-on build compile))
+             (fact (depends-on deploy test))
+             (fact (depends-on bundle build))
+             (fact (transitive-relation depends-on))
+             (fact (inverse-relation depends-on prerequisite-of))))
+
+    (:id "L022" :title "Task progress"
+     :why "Notes finished work and shows which tasks have a finished prerequisite."
+     :forms ((fact (done compile))
+             (rule has-done-prerequisite-rule
+               (if (done ?y) (depends-on ?x ?y))
+               (then (has-done-prerequisite ?x ?y)))))
+
+    ;; ---- Family: more people and relations ----
+
+    (:id "L023" :title "More family members"
+     :why "Gives the family rules more people to work on."
+     :forms ((fact (parent bob ivy))
+             (fact (parent erin frank))
+             (fact (parent erin grace))
+             (fact (parent dave hank))))
+
+    (:id "L024" :title "Gender facts"
+     :why "Records who is female or male so relations can be named precisely."
+     :forms ((fact (female alice))
+             (fact (female erin))
+             (fact (female carol))
+             (fact (female ivy))
+             (fact (female grace))
+             (fact (male bob))
+             (fact (male dave))
+             (fact (male frank))
+             (fact (male hank))))
+
+    (:id "L025" :title "Mother and father"
+     :why "A female parent is a mother and a male parent is a father."
+     :forms ((rule mother-rule
+               (if (parent ?p ?c) (female ?p))
+               (then (mother ?p ?c)))
+             (rule father-rule
+               (if (parent ?p ?c) (male ?p))
+               (then (father ?p ?c)))))
+
+    (:id "L026" :title "Brother and sister"
+     :why "A male sibling is a brother and a female sibling is a sister."
+     :forms ((rule brother-rule
+               (if (sibling ?a ?b) (male ?a))
+               (then (brother ?a ?b)))
+             (rule sister-rule
+               (if (sibling ?a ?b) (female ?a))
+               (then (sister ?a ?b)))))
+
+    (:id "L027" :title "Grandmother and grandfather"
+     :why "Grandparents named by gender."
+     :forms ((rule grandmother-rule
+               (if (grandparent ?g ?c) (female ?g))
+               (then (grandmother ?g ?c)))
+             (rule grandfather-rule
+               (if (grandparent ?g ?c) (male ?g))
+               (then (grandfather ?g ?c)))))
+
+    (:id "L028" :title "Aunt and uncle"
+     :why "A female pibling is an aunt and a male pibling is an uncle."
+     :forms ((rule aunt-rule
+               (if (pibling ?a ?c) (female ?a))
+               (then (aunt ?a ?c)))
+             (rule uncle-rule
+               (if (pibling ?a ?c) (male ?a))
+               (then (uncle ?a ?c)))))
+
+    (:id "L029" :title "Child and descendant"
+     :why "The reverse of parent and of ancestor."
+     :forms ((rule child-rule
+               (if (parent ?p ?c))
+               (then (child ?c ?p)))
+             (rule descendant-rule
+               (if (ancestor ?a ?d))
+               (then (descendant ?d ?a)))))
+
+    (:id "L030" :title "Great-grandparent"
+     :why "A parent of a grandparent."
+     :forms ((rule great-grandparent-rule
+               (if (parent ?a ?b) (grandparent ?b ?c))
+               (then (great-grandparent ?a ?c)))))
+
+    (:id "L031" :title "Marriage and in-laws"
+     :why "Marriage works in both directions; the parent of someone's spouse is a parent-in-law."
+     :forms ((fact (married alice leo))
+             (fact (married bob nina))
+             (fact (married dave olga))
+             (fact (symmetric-relation married))
+             (rule parent-in-law-rule
+               (if (parent ?p ?a) (married ?a ?b))
+               (then (parent-in-law ?p ?b)))))
+
+    (:id "L032" :title "Second parents"
+     :why "Adds the other parent for several children."
+     :forms ((fact (parent leo bob))
+             (fact (parent leo erin))
+             (fact (parent nina carol))
+             (fact (parent nina ivy))
+             (fact (parent olga hank))
+             (fact (male leo))
+             (fact (female nina))
+             (fact (female olga))))
+
+    (:id "L033" :title "Co-parents"
+     :why "Two different people who are parents of the same child."
+     :forms ((rule co-parent-rule
+               (if (parent ?a ?c) (parent ?b ?c) (different ?a ?b))
+               (then (co-parent ?a ?b)))))
+
+    ;; ---- General knowledge: animals, friends, graphs, numbers, places, time ----
+
+    (:id "L034" :title "More animals"
+     :why "Extends the animal taxonomy with more kinds and a fish and amphibian branch."
+     :forms ((fact (is-a horse mammal))
+             (fact (is-a bat mammal))
+             (fact (is-a eagle bird))
+             (fact (is-a penguin bird))
+             (fact (is-a fish animal))
+             (fact (is-a salmon fish))
+             (fact (is-a shark fish))
+             (fact (is-a frog amphibian))
+             (fact (is-a amphibian animal))))
+
+    (:id "L035" :title "More properties"
+     :why "More traits that animals inherit from their categories."
+     :forms ((fact (has fish gills))
+             (fact (has fish fins))
+             (fact (has bird wings))
+             (fact (has mammal milk))
+             (fact (has amphibian moist-skin))))
+
+    (:id "L036" :title "Abilities"
+     :why "What animals can do; abilities of a category pass down to its members. Flying is listed per animal because not every bird flies."
+     :forms ((fact (can sparrow fly))
+             (fact (can eagle fly))
+             (fact (can bat fly))
+             (fact (can fish swim))
+             (fact (can penguin swim))
+             (fact (can bird lay-eggs))
+             (fact (can mammal nurse-young))
+             (rule can-inherit-rule
+               (if (is-a ?x ?y) (can ?y ?a))
+               (then (can ?x ?a)))))
+
+    (:id "L037" :title "Friendship"
+     :why "Friendship works both ways; a friend of a friend is a possible introduction."
+     :forms ((fact (friend-of ana ben))
+             (fact (friend-of ben cai))
+             (fact (friend-of cai dee))
+             (fact (friend-of eli fay))
+             (fact (symmetric-relation friend-of))
+             (rule friend-of-friend-rule
+               (if (friend-of ?a ?b) (friend-of ?b ?c) (different ?a ?c))
+               (then (friend-of-friend ?a ?c)))))
+
+    (:id "L038" :title "Graph reachability"
+     :why "A small network of nodes; works out which nodes can be reached from which."
+     :forms ((fact (edge n1 n2))
+             (fact (edge n2 n3))
+             (fact (edge n3 n4))
+             (fact (edge n1 n5))
+             (fact (edge n5 n6))
+             (fact (edge n6 n3))
+             (rule reach-direct-rule
+               (if (edge ?a ?b))
+               (then (reachable ?a ?b)))
+             (rule reach-step-rule
+               (if (edge ?a ?b) (reachable ?b ?c))
+               (then (reachable ?a ?c)))))
+
+    (:id "L039" :title "Shared destinations"
+     :why "Two different nodes that can both reach the same node."
+     :forms ((rule common-target-rule
+               (if (reachable ?a ?t) (reachable ?b ?t) (different ?a ?b))
+               (then (shares-target ?a ?b)))))
+
+    (:id "L040" :title "Successor numbers"
+     :why "Counting from 1 to 6 using next facts; less-than is built from them and chained by the generic transitivity rule."
+     :forms ((fact (next 1 2))
+             (fact (next 2 3))
+             (fact (next 3 4))
+             (fact (next 4 5))
+             (fact (next 5 6))
+             (fact (transitive-relation less-than))
+             (rule less-than-base-rule
+               (if (next ?a ?b))
+               (then (less-than ?a ?b)))))
+
+    (:id "L041" :title "Greater-than and between"
+     :why "The reverse of less-than, plus a between relation for three ordered numbers."
+     :forms ((fact (inverse-relation less-than greater-than))
+             (rule between-rule
+               (if (less-than ?a ?b) (less-than ?b ?c))
+               (then (between ?b ?a ?c)))))
+
+    (:id "L042" :title "Ranking people"
+     :why "Height ordering: taller-than chains together and has a shorter-than reverse."
+     :forms ((fact (taller-than ana ben))
+             (fact (taller-than ben cai))
+             (fact (taller-than cai dee))
+             (fact (transitive-relation taller-than))
+             (fact (inverse-relation taller-than shorter-than))))
+
+    (:id "L043" :title "Places"
+     :why "Where places are, nested from city to country to continent; located-in is chained automatically."
+     :forms ((fact (located-in singapore asia))
+             (fact (located-in tokyo japan))
+             (fact (located-in kyoto japan))
+             (fact (located-in japan asia))
+             (fact (located-in paris france))
+             (fact (located-in france europe))
+             (fact (located-in asia earth))
+             (fact (located-in europe earth))
+             (fact (transitive-relation located-in))))
+
+    (:id "L044" :title "Capitals"
+     :why "A capital is a city and is located in its country."
+     :forms ((fact (capital-of tokyo japan))
+             (fact (capital-of paris france))
+             (rule capital-located-rule
+               (if (capital-of ?c ?n))
+               (then (located-in ?c ?n)))
+             (rule capital-city-rule
+               (if (capital-of ?c ?n))
+               (then (city ?c)))))
+
+    (:id "L045" :title "Same country"
+     :why "Two different places inside the same country."
+     :forms ((fact (country japan))
+             (fact (country france))
+             (rule same-country-rule
+               (if (located-in ?a ?c) (located-in ?b ?c) (country ?c) (different ?a ?b))
+               (then (same-country ?a ?b)))))
+
+    (:id "L046" :title "Before and after"
+     :why "Ordering of events in a day; before chains together and has an after reverse."
+     :forms ((fact (before breakfast lunch))
+             (fact (before lunch dinner))
+             (fact (before dinner sleep))
+             (fact (transitive-relation before))
+             (fact (inverse-relation before after))))
+
+    (:id "L047" :title "Disjoint categories and conflicts"
+     :why "Some categories cannot overlap; if something is placed in two of them, a conflict is reported."
+     :forms ((fact (disjoint mammal bird))
+             (fact (disjoint mammal fish))
+             (fact (disjoint bird fish))
+             (fact (disjoint mammal amphibian))
+             (fact (symmetric-relation disjoint))
+             (rule conflict-rule
+               (if (disjoint ?a ?b) (is-a ?x ?a) (is-a ?x ?b))
+               (then (conflict ?x ?a ?b)))))
+
+    (:id "L048" :title "Courses"
+     :why "Teachers, enrolled students, who studies under whom, and who shares a class."
+     :forms ((fact (teaches smith math))
+             (fact (teaches jones physics))
+             (fact (enrolled ana math))
+             (fact (enrolled ben math))
+             (fact (enrolled ben physics))
+             (rule student-of-rule
+               (if (enrolled ?s ?c) (teaches ?t ?c))
+               (then (student-of ?s ?t)))
+             (rule classmates-rule
+               (if (enrolled ?a ?c) (enrolled ?b ?c) (different ?a ?b))
+               (then (classmates ?a ?b)))))
+
+    (:id "L049" :title "Parts and wholes"
+     :why "What is part of what; chained so a spoke is part of the bike, with a has-part reverse."
+     :forms ((fact (part-of wheel bike))
+             (fact (part-of frame bike))
+             (fact (part-of spoke wheel))
+             (fact (part-of rim wheel))
+             (fact (transitive-relation part-of))
+             (fact (inverse-relation part-of has-part))))))
 
 ;;; ======================================================================
 ;;; Validation
@@ -373,7 +802,10 @@ explained. Returns (values ok-p problems stats)."
   '((grandparent alice ?who)
     (ancestor ?who dave)
     (mortal socrates)
-    (sibling bob ?who)))   ; no answers until lesson L001 has been applied
+    (sibling bob ?who)     ; the questions below get answers as lessons are applied
+    (suggest ?action ?device)
+    (alert ?what ?level)
+    (clash ?who ?a ?b)))
 
 (defun print-answers (kb pattern)
   (let ((answers (query kb pattern)))
