@@ -756,7 +756,246 @@ Returns (values new-facts reason): :fixpoint, :round-limit or :fact-limit."
              (fact (part-of spoke wheel))
              (fact (part-of rim wheel))
              (fact (transitive-relation part-of))
-             (fact (inverse-relation part-of has-part))))))
+             (fact (inverse-relation part-of has-part))))
+
+    ;; ---- More assistant skills: moods, state, security, deadlines, people ----
+
+    (:id "L050" :title "Time of day and lighting"
+     :why "A demo time of day; in the evening the assistant suggests dimming the lights in occupied rooms."
+     :forms ((fact (time-of-day evening))
+             (rule evening-dim-rule
+               (if (time-of-day evening) (at ?p ?r) (light-in ?d ?r))
+               (then (suggest dim ?d)))))
+
+    (:id "L051" :title "Device capabilities"
+     :why "What each kind of device can do, so the assistant can say what a particular device is able to do."
+     :forms ((fact (type-can light dim))
+             (fact (type-can light switch))
+             (fact (type-can audio play-music))
+             (fact (type-can climate heat))
+             (rule device-can-rule
+               (if (device-type ?d ?t) (type-can ?t ?a))
+               (then (device-can ?d ?a)))))
+
+    (:id "L052" :title "Device state"
+     :why "Demo on/off readings for devices, and which rooms currently have a light on."
+     :forms ((fact (state lamp-1 off))
+             (fact (state lamp-2 off))
+             (fact (state heater on))
+             (rule device-on-rule
+               (if (state ?d on))
+               (then (is-on ?d)))
+             (rule lit-rule
+               (if (is-on ?d) (device-type ?d light) (device-in ?d ?r))
+               (then (lit ?r)))))
+
+    (:id "L053" :title "Energy saving"
+     :why "Adds a kitchen with a lamp left on in an empty room; the assistant suggests switching off anything that is on in an empty room."
+     :forms ((fact (device-in lamp-3 kitchen))
+             (fact (device-type lamp-3 light))
+             (fact (state lamp-3 on))
+             (fact (occupancy kitchen empty))
+             (rule energy-saving-rule
+               (if (occupancy ?r empty) (device-in ?d ?r) (state ?d on))
+               (then (suggest turn-off ?d)))))
+
+    (:id "L054" :title "Security"
+     :why "Demo door readings: when security is armed, an unlocked door raises a warning and a suggestion to lock it."
+     :forms ((fact (door-state front-door locked))
+             (fact (door-state back-door unlocked))
+             (fact (security-mode armed))
+             (rule unlocked-while-armed-rule
+               (if (security-mode armed) (door-state ?d unlocked))
+               (then (alert ?d warning)))
+             (rule suggest-lock-rule
+               (if (security-mode armed) (door-state ?d unlocked))
+               (then (suggest lock ?d)))))
+
+    (:id "L055" :title "Days of the week"
+     :why "Orders the days of the week; earlier-day is chained automatically by the generic transitivity rule."
+     :forms ((fact (next-day mon tue))
+             (fact (next-day tue wed))
+             (fact (next-day wed thu))
+             (fact (next-day thu fri))
+             (fact (next-day fri sat))
+             (fact (next-day sat sun))
+             (fact (transitive-relation earlier-day))
+             (rule earlier-day-base-rule
+               (if (next-day ?a ?b))
+               (then (earlier-day ?a ?b)))))
+
+    (:id "L056" :title "Deadlines and reminders"
+     :why "Demo tasks with owners and due days; the assistant works out what is overdue and who to remind."
+     :forms ((fact (today wed))
+             (fact (due report mon))
+             (fact (due taxes fri))
+             (fact (owns ana report))
+             (fact (owns ben taxes))
+             (rule overdue-rule
+               (if (due ?t ?d) (today ?n) (earlier-day ?d ?n))
+               (then (overdue ?t)))
+             (rule remind-rule
+               (if (owns ?p ?t) (due ?t ?d))
+               (then (remind ?p ?t ?d)))
+             (rule overdue-remind-rule
+               (if (overdue ?t) (owns ?p ?t))
+               (then (remind-overdue ?p ?t)))))
+
+    (:id "L057" :title "Priorities"
+     :why "Marks task priorities; an overdue high-priority task is urgent, and owners of high-priority tasks are told to focus on them."
+     :forms ((fact (priority report high))
+             (fact (priority taxes medium))
+             (rule urgent-rule
+               (if (overdue ?t) (priority ?t high))
+               (then (urgent ?t)))
+             (rule focus-rule
+               (if (priority ?t high) (owns ?p ?t))
+               (then (focus ?p ?t)))))
+
+    (:id "L058" :title "Shopping and stock"
+     :why "Demo pantry levels; anything running low becomes a suggestion to buy it."
+     :forms ((fact (stock milk low))
+             (fact (stock rice ok))
+             (fact (stock coffee low))
+             (rule restock-rule
+               (if (stock ?i low))
+               (then (suggest buy ?i)))))
+
+    (:id "L059" :title "Weather and plans"
+     :why "Demo forecast and plans; people with outdoor plans on a rainy day get an umbrella suggestion."
+     :forms ((fact (forecast tomorrow rain))
+             (fact (plans ana tomorrow outdoors))
+             (fact (plans ben tomorrow indoors))
+             (rule umbrella-rule
+               (if (forecast ?d rain) (plans ?p ?d outdoors))
+               (then (suggest bring-umbrella ?p)))))
+
+    (:id "L060" :title "Organisation chart"
+     :why "Who directly manages whom; management chains and reporting lines are derived automatically, and peers share the same direct manager."
+     :forms ((fact (manages-directly rhea tom))
+             (fact (manages-directly tom uma))
+             (fact (manages-directly tom vic))
+             (fact (manages-directly uma wes))
+             (fact (transitive-relation manages))
+             (fact (inverse-relation manages reports-to))
+             (rule manages-base-rule
+               (if (manages-directly ?m ?a))
+               (then (manages ?m ?a)))
+             (rule peers-rule
+               (if (manages-directly ?m ?a) (manages-directly ?m ?b) (different ?a ?b))
+               (then (peers ?a ?b)))))
+
+    (:id "L061" :title "Transit network"
+     :why "Stations joined by lines; the assistant works out which stations can be reached from which."
+     :forms ((fact (connected central north))
+             (fact (connected central east))
+             (fact (connected east harbour))
+             (fact (connected harbour airport))
+             (fact (symmetric-relation connected))
+             (fact (transitive-relation can-travel))
+             (rule can-travel-base-rule
+               (if (connected ?a ?b))
+               (then (can-travel ?a ?b)))))
+
+    (:id "L062" :title "What the assistant can do"
+     :why "A small self-description: the assistant lists the topics it can help with."
+     :forms ((fact (skill assistant home-control))
+             (fact (skill assistant scheduling))
+             (fact (skill assistant diagnostics))
+             (fact (skill assistant explanations))
+             (fact (topic-of home-control lights))
+             (fact (topic-of home-control music))
+             (fact (topic-of scheduling meetings))
+             (fact (topic-of diagnostics system-status))
+             (rule can-help-rule
+               (if (skill assistant ?s) (topic-of ?s ?t))
+               (then (can-help-with ?t)))))
+
+    ;; ---- More general knowledge ----
+
+    (:id "L063" :title "Programming languages"
+     :why "Lisp dialects and their implementations; an implementation of a dialect is also an implementation of the wider family."
+     :forms ((fact (dialect-of common-lisp lisp))
+             (fact (dialect-of scheme lisp))
+             (fact (dialect-of clojure lisp))
+             (fact (implementation-of sbcl common-lisp))
+             (fact (implementation-of ecl common-lisp))
+             (fact (implementation-of clisp common-lisp))
+             (rule implementation-family-rule
+               (if (implementation-of ?i ?d) (dialect-of ?d ?l))
+               (then (implementation-of ?i ?l)))))
+
+    (:id "L064" :title "Solar system"
+     :why "What orbits what; in-system-of follows the chain, so a moon is in the system of the Sun."
+     :forms ((fact (orbits mercury sun))
+             (fact (orbits venus sun))
+             (fact (orbits earth sun))
+             (fact (orbits mars sun))
+             (fact (orbits moon earth))
+             (fact (orbits phobos mars))
+             (fact (transitive-relation in-system-of))
+             (rule in-system-base-rule
+               (if (orbits ?a ?b))
+               (then (in-system-of ?a ?b)))))
+
+    (:id "L065" :title "Kinds of number"
+     :why "Number kinds nested inside each other, using the same is-a chaining as the animals."
+     :forms ((fact (is-a natural-number integer))
+             (fact (is-a integer rational))
+             (fact (is-a rational real))
+             (fact (is-a prime natural-number))))
+
+    (:id "L066" :title "Shapes"
+     :why "A taxonomy of shapes with traits that pass down, so a square inherits what quadrilaterals and parallelograms have."
+     :forms ((fact (is-a square rectangle))
+             (fact (is-a square rhombus))
+             (fact (is-a rectangle parallelogram))
+             (fact (is-a rhombus parallelogram))
+             (fact (is-a parallelogram quadrilateral))
+             (fact (is-a quadrilateral polygon))
+             (fact (is-a triangle polygon))
+             (fact (has quadrilateral four-sides))
+             (fact (has triangle three-sides))
+             (fact (has parallelogram parallel-opposite-sides))))
+
+    (:id "L067" :title "Shape traits"
+     :why "More traits, plus a rule that triangles and quadrilaterals cannot overlap."
+     :forms ((fact (has rectangle right-angles))
+             (fact (has rhombus equal-sides))
+             (fact (disjoint triangle quadrilateral))))
+
+    (:id "L068" :title "Colour mixing"
+     :why "Which colours mix to make which; the order of the two colours does not matter."
+     :forms ((fact (mix red blue purple))
+             (fact (mix red yellow orange))
+             (fact (mix blue yellow green))
+             (rule mix-symmetric-rule
+               (if (mix ?a ?b ?c))
+               (then (mix ?b ?a ?c)))))
+
+    (:id "L069" :title "Food chain"
+     :why "Who eats whom; food-chain follows the whole chain from predator down to plants."
+     :forms ((fact (eats hawk snake))
+             (fact (eats snake frog))
+             (fact (eats frog insect))
+             (fact (eats insect plant))
+             (fact (transitive-relation food-chain))
+             (rule food-chain-base-rule
+               (if (eats ?a ?b))
+               (then (food-chain ?a ?b)))))
+
+    (:id "L070" :title "Habitats"
+     :why "Where animals live; an animal living in a water habitat is aquatic."
+     :forms ((fact (lives-in frog pond))
+             (fact (lives-in salmon river))
+             (fact (lives-in shark ocean))
+             (fact (lives-in eagle mountain))
+             (fact (water-habitat pond))
+             (fact (water-habitat river))
+             (fact (water-habitat ocean))
+             (rule aquatic-rule
+               (if (lives-in ?a ?h) (water-habitat ?h))
+               (then (aquatic ?a)))))))
 
 ;;; ======================================================================
 ;;; Validation
@@ -805,7 +1044,9 @@ explained. Returns (values ok-p problems stats)."
     (sibling bob ?who)     ; the questions below get answers as lessons are applied
     (suggest ?action ?device)
     (alert ?what ?level)
-    (clash ?who ?a ?b)))
+    (clash ?who ?a ?b)
+    (overdue ?task)
+    (can-help-with ?topic)))
 
 (defun print-answers (kb pattern)
   (let ((answers (query kb pattern)))
