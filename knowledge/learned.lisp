@@ -101,3 +101,14 @@
 ;; Turns failures into critical alerts and degraded systems into warnings.
 (rule alert-failing-rule (if (failing ?c)) (then (alert ?c critical)))
 (rule alert-degraded-rule (if (degraded ?s)) (then (alert ?s warning)))
+
+;; --- L017: Calendar (applied 2026-10-17 17:06 UTC) ---
+;; Events, their time slots, and who attends; works out when each person is busy.
+(fact (scheduled standup mon-9))
+(fact (scheduled review mon-9))
+(fact (scheduled lunch mon-12))
+(fact (attends ana standup))
+(fact (attends ana review))
+(fact (attends ben standup))
+(fact (attends ben lunch))
+(rule busy-rule (if (attends ?p ?e) (scheduled ?e ?t)) (then (busy ?p ?t)))
