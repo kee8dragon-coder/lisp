@@ -203,3 +203,14 @@
 (fact (married dave olga))
 (fact (symmetric-relation married))
 (rule parent-in-law-rule (if (parent ?p ?a) (married ?a ?b)) (then (parent-in-law ?p ?b)))
+
+;; --- L032: Second parents (applied 2026-10-17 22:38 UTC) ---
+;; Adds the other parent for several children.
+(fact (parent leo bob))
+(fact (parent leo erin))
+(fact (parent nina carol))
+(fact (parent nina ivy))
+(fact (parent olga hank))
+(fact (male leo))
+(fact (female nina))
+(fact (female olga))
