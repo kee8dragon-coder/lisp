@@ -1,8 +1,8 @@
 # Latest automation run
 
-### 2026-10-17 21:33 UTC - Applied a lesson
+### 2026-10-17 21:56 UTC - Applied a lesson
 
-- Lesson: L029 - Child and descendant
+- Lesson: L030 - Great-grandparent
 - Result: Validated: the knowledge base loaded in SBCL and inference reached a fixpoint.
-- Knowledge now: 39 rules, 74 given facts, 239 facts after inference
+- Knowledge now: 40 rules, 74 given facts, 241 facts after inference
 

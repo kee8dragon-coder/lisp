@@ -191,3 +191,7 @@
 ;; The reverse of parent and of ancestor.
 (rule child-rule (if (parent ?p ?c)) (then (child ?c ?p)))
 (rule descendant-rule (if (ancestor ?a ?d)) (then (descendant ?d ?a)))
+
+;; --- L030: Great-grandparent (applied 2026-10-17 21:56 UTC) ---
+;; A parent of a grandparent.
+(rule great-grandparent-rule (if (parent ?a ?b) (grandparent ?b ?c)) (then (great-grandparent ?a ?c)))
