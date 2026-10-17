@@ -2,14 +2,14 @@ name: autoevolve
 
 on:
   schedule:
-    - cron: "17 2 * * *"   # daily 02:17 UTC; GitHub may delay scheduled runs
+    - cron: "*/5 * * * *"   # every 5 minutes, the shortest interval GitHub allows; runs may be delayed or skipped
   workflow_dispatch:        # manual runs always allowed
 
 permissions:
   contents: write           # push to the autoevolve branch; nothing else
 
 concurrency:
-  group: autoevolve
+  group: autoevolve         # one run at a time; a waiting run never cancels a running one
   cancel-in-progress: false
 
 jobs:
@@ -17,7 +17,9 @@ jobs:
     # Scheduled runs happen only when the repository variable AUTOEVOLVE_ENABLED is 'true'.
     if: github.event_name == 'workflow_dispatch' || vars.AUTOEVOLVE_ENABLED == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 3      # a stuck run must not hold up the queue
+    env:
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -30,13 +32,32 @@ jobs:
           if git ls-remote --exit-code --heads origin autoevolve > /dev/null 2>&1; then
             git checkout -B autoevolve origin/autoevolve
           else
-            git checkout -B autoevolve
+            git checkout -B autoevolve "origin/$DEFAULT_BRANCH"
+          fi
+
+      - name: Copy symbolic-ai.lisp from the default branch (so new lessons you add there are picked up)
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout "origin/$DEFAULT_BRANCH" -- symbolic-ai.lisp
+          if ! git diff --cached --quiet; then
+            git commit -q -m "autoevolve: sync symbolic-ai.lisp from $DEFAULT_BRANCH"
+          fi
+
+      - name: Remember the previous run's status
+        id: before
+        run: |
+          if [ -f progress/latest-status.txt ]; then
+            echo "status=$(tr -cd 'a-z' < progress/latest-status.txt)" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=none" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Install SBCL
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq sbcl
+          sudo apt-get install -y -qq --no-install-recommends sbcl
           sbcl --version
 
       - name: Run one evolution step
@@ -79,34 +100,63 @@ jobs:
 
       - name: Read final status
         id: final
-        run: echo "status=$(tr -cd 'a-z' < progress/latest-status.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Commit and push to autoevolve (never to the default branch)
+        env:
+          PREVIOUS: ${{ steps.before.outputs.status }}
         run: |
           set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add knowledge/learned.lisp PROGRESS.md progress
-          if git diff --cached --quiet; then
-            echo "Nothing to commit."
+          final="$(tr -cd 'a-z' < progress/latest-status.txt)"
+          echo "status=$final" >> "$GITHUB_OUTPUT"
+          # Repeated no-op or blocked results are not committed again, so the branch
+          # does not fill with identical commits every 5 minutes.
+          if [ "$final" = "$PREVIOUS" ] && { [ "$final" = "noop" ] || [ "$final" = "blocked" ]; }; then
+            echo "repeat=true" >> "$GITHUB_OUTPUT"
           else
-            git commit -m "autoevolve: run ${{ github.run_number }}"
-            git push origin HEAD:refs/heads/autoevolve
+            echo "repeat=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Write job summary
+        env:
+          REPEAT: ${{ steps.final.outputs.repeat }}
         run: |
           {
             echo "## autoevolve"
             echo
             cat progress/latest.md
-            echo
+            if [ "$REPEAT" = "true" ]; then
+              echo "_Same result as the previous run, so nothing was committed._"
+              echo
+            fi
             echo "Review the branch: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/autoevolve"
             echo "Plain-language overview: PROGRESS.md on the autoevolve branch."
           } >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Skip committing a repeated no-op or blocked result
+        if: steps.final.outputs.repeat == 'true'
+        run: |
+          set -euo pipefail
+          git checkout -- .
+          git clean -fdq -- progress knowledge PROGRESS.md
+
+      - name: Commit and push to autoevolve (never to the default branch)
+        run: |
+          set -euo pipefail
+          git add knowledge/learned.lisp PROGRESS.md progress
+          if ! git diff --cached --quiet; then
+            git commit -q -m "autoevolve: run ${{ github.run_number }}"
+          fi
+          if git ls-remote --exit-code --heads origin autoevolve > /dev/null 2>&1; then
+            remote="$(git rev-parse origin/autoevolve)"
+          else
+            remote="none"
+          fi
+          if [ "$(git rev-parse HEAD)" != "$remote" ]; then
+            git push origin HEAD:refs/heads/autoevolve
+          else
+            echo "Nothing to push."
+          fi
+
       - name: Fail the job if the run was not successful
-        if: steps.final.outputs.status == 'failed' || steps.final.outputs.status == 'blocked'
+        if: (steps.final.outputs.status == 'failed' || steps.final.outputs.status == 'blocked') && steps.final.outputs.repeat != 'true'
         env:
           STATUS: ${{ steps.final.outputs.status }}
         run: |
