@@ -181,3 +181,8 @@
 ;; Grandparents named by gender.
 (rule grandmother-rule (if (grandparent ?g ?c) (female ?g)) (then (grandmother ?g ?c)))
 (rule grandfather-rule (if (grandparent ?g ?c) (male ?g)) (then (grandfather ?g ?c)))
+
+;; --- L028: Aunt and uncle (applied 2026-10-17 21:08 UTC) ---
+;; A female pibling is an aunt and a male pibling is an uncle.
+(rule aunt-rule (if (pibling ?a ?c) (female ?a)) (then (aunt ?a ?c)))
+(rule uncle-rule (if (pibling ?a ?c) (male ?a)) (then (uncle ?a ?c)))
