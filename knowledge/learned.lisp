@@ -32,3 +32,7 @@
 ;; --- L006: Cousin relation (applied 2026-10-17 10:11 UTC) ---
 ;; Children of two siblings are cousins.
 (rule cousin-rule (if (parent ?p1 ?a) (parent ?p2 ?b) (sibling ?p1 ?p2)) (then (cousin ?a ?b)))
+
+;; --- L007: Generic transitivity (applied 2026-10-17 13:07 UTC) ---
+;; Any relation declared with transitive-relation is chained automatically (a to b and b to c gives a to c).
+(rule generic-transitive-rule (if (transitive-relation ?r) (?r ?a ?b) (?r ?b ?c)) (then (?r ?a ?c)))
