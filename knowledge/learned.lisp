@@ -28,3 +28,7 @@
 (fact (has mammal fur))
 (fact (has bird feathers))
 (rule inherit-property (if (is-a ?x ?y) (has ?y ?p)) (then (has ?x ?p)))
+
+;; --- L006: Cousin relation (applied 2026-10-17 10:11 UTC) ---
+;; Children of two siblings are cousins.
+(rule cousin-rule (if (parent ?p1 ?a) (parent ?p2 ?b) (sibling ?p1 ?p2)) (then (cousin ?a ?b)))
