@@ -14,8 +14,7 @@ concurrency:
 
 jobs:
   evolve:
-    # Scheduled runs happen only when the repository variable AUTOEVOLVE_ENABLED is 'true'.
-    if: github.event_name == 'workflow_dispatch' || vars.AUTOEVOLVE_ENABLED == 'true'
+    # No on/off variable: to pause, disable this workflow in the Actions tab.
     runs-on: ubuntu-latest
     timeout-minutes: 3      # a stuck run must not hold up the queue
     env:
