@@ -1,9 +1,12 @@
 ;;;; Written by the automation. Delete this file to reset progress.
 (:APPLIED
  ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009" "L010" "L011" "L012" "L013" "L014"
-  "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022")
- :FAILED NIL :RUNS 22 :LOG
- ((:TIME "2026-10-17 19:00 UTC" :STATUS :APPLIED :LESSON "L022" :TITLE "Task progress" :NOTE
+  "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023")
+ :FAILED NIL :RUNS 23 :LOG
+ ((:TIME "2026-10-17 19:21 UTC" :STATUS :APPLIED :LESSON "L023" :TITLE "More family members" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 29 :GIVEN 65 :TOTAL 180))
+  (:TIME "2026-10-17 19:00 UTC" :STATUS :APPLIED :LESSON "L022" :TITLE "Task progress" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 29 :GIVEN 61 :TOTAL 142))
   (:TIME "2026-10-17 18:33 UTC" :STATUS :APPLIED :LESSON "L021" :TITLE "Task dependencies" :NOTE

@@ -147,3 +147,10 @@
 ;; Notes finished work and shows which tasks have a finished prerequisite.
 (fact (done compile))
 (rule has-done-prerequisite-rule (if (done ?y) (depends-on ?x ?y)) (then (has-done-prerequisite ?x ?y)))
+
+;; --- L023: More family members (applied 2026-10-17 19:21 UTC) ---
+;; Gives the family rules more people to work on.
+(fact (parent bob ivy))
+(fact (parent erin frank))
+(fact (parent erin grace))
+(fact (parent dave hank))
