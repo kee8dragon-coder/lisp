@@ -1,8 +1,8 @@
 # Latest automation run
 
-### 2026-10-17 15:56 UTC - Applied a lesson
+### 2026-10-17 16:15 UTC - Applied a lesson
 
-- Lesson: L014 - System components
+- Lesson: L015 - Status and failures
 - Result: Validated: the knowledge base loaded in SBCL and inference reached a fixpoint.
-- Knowledge now: 20 rules, 34 given facts, 80 facts after inference
+- Knowledge now: 22 rules, 38 given facts, 86 facts after inference
 

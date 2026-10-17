@@ -87,3 +87,12 @@
 (fact (needs assistant compute))
 (fact (needs assistant network))
 (fact (transitive-relation needs))
+
+;; --- L015: Status and failures (applied 2026-10-17 16:15 UTC) ---
+;; A demo status report: when a component is down, everything that needs it is marked degraded, and explain shows the chain.
+(fact (status power ok))
+(fact (status cooling ok))
+(fact (status compute ok))
+(fact (status network down))
+(rule failing-rule (if (status ?c down)) (then (failing ?c)))
+(rule degraded-rule (if (status ?c down) (needs ?s ?c)) (then (degraded ?s)))
