@@ -96,3 +96,8 @@
 (fact (status network down))
 (rule failing-rule (if (status ?c down)) (then (failing ?c)))
 (rule degraded-rule (if (status ?c down) (needs ?s ?c)) (then (degraded ?s)))
+
+;; --- L016: Alerts (applied 2026-10-17 16:44 UTC) ---
+;; Turns failures into critical alerts and degraded systems into warnings.
+(rule alert-failing-rule (if (failing ?c)) (then (alert ?c critical)))
+(rule alert-degraded-rule (if (degraded ?s)) (then (alert ?s warning)))

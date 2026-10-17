@@ -1,8 +1,8 @@
 # Latest automation run
 
-### 2026-10-17 16:15 UTC - Applied a lesson
+### 2026-10-17 16:44 UTC - Applied a lesson
 
-- Lesson: L015 - Status and failures
+- Lesson: L016 - Alerts
 - Result: Validated: the knowledge base loaded in SBCL and inference reached a fixpoint.
-- Knowledge now: 22 rules, 38 given facts, 86 facts after inference
+- Knowledge now: 24 rules, 38 given facts, 88 facts after inference
 
