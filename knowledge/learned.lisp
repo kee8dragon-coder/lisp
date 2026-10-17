@@ -195,3 +195,11 @@
 ;; --- L030: Great-grandparent (applied 2026-10-17 21:56 UTC) ---
 ;; A parent of a grandparent.
 (rule great-grandparent-rule (if (parent ?a ?b) (grandparent ?b ?c)) (then (great-grandparent ?a ?c)))
+
+;; --- L031: Marriage and in-laws (applied 2026-10-17 22:13 UTC) ---
+;; Marriage works in both directions; the parent of someone's spouse is a parent-in-law.
+(fact (married alice leo))
+(fact (married bob nina))
+(fact (married dave olga))
+(fact (symmetric-relation married))
+(rule parent-in-law-rule (if (parent ?p ?a) (married ?a ?b)) (then (parent-in-law ?p ?b)))

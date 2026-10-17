@@ -2,9 +2,12 @@
 (:APPLIED
  ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009" "L010" "L011" "L012" "L013" "L014"
   "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024" "L025" "L026" "L027" "L028"
-  "L029" "L030")
- :FAILED NIL :RUNS 30 :LOG
- ((:TIME "2026-10-17 21:56 UTC" :STATUS :APPLIED :LESSON "L030" :TITLE "Great-grandparent" :NOTE
+  "L029" "L030" "L031")
+ :FAILED NIL :RUNS 31 :LOG
+ ((:TIME "2026-10-17 22:13 UTC" :STATUS :APPLIED :LESSON "L031" :TITLE "Marriage and in-laws" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 41 :GIVEN 78 :TOTAL 250))
+  (:TIME "2026-10-17 21:56 UTC" :STATUS :APPLIED :LESSON "L030" :TITLE "Great-grandparent" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 40 :GIVEN 74 :TOTAL 241))
   (:TIME "2026-10-17 21:33 UTC" :STATUS :APPLIED :LESSON "L029" :TITLE "Child and descendant" :NOTE
@@ -91,7 +94,4 @@
    (:RULES 7 :GIVEN 5 :TOTAL 20))
   (:TIME "2026-10-16 10:32 UTC" :STATUS :APPLIED :LESSON "L002" :TITLE "Grandchild relation" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 6 :GIVEN 5 :TOTAL 19))
-  (:TIME "2026-10-16 10:03 UTC" :STATUS :APPLIED :LESSON "L001" :TITLE "Sibling relation" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 5 :GIVEN 5 :TOTAL 17))))
+   (:RULES 6 :GIVEN 5 :TOTAL 19))))
