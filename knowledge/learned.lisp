@@ -112,3 +112,7 @@
 (fact (attends ben standup))
 (fact (attends ben lunch))
 (rule busy-rule (if (attends ?p ?e) (scheduled ?e ?t)) (then (busy ?p ?t)))
+
+;; --- L018: Schedule clashes (applied 2026-10-17 17:29 UTC) ---
+;; Flags a person who attends two different events in the same time slot.
+(rule clash-rule (if (attends ?p ?a) (attends ?p ?b) (scheduled ?a ?t) (scheduled ?b ?t) (different ?a ?b)) (then (clash ?p ?a ?b)))
