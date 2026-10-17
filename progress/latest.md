@@ -1,8 +1,8 @@
 # Latest automation run
 
-### 2026-10-17 13:58 UTC - Applied a lesson
+### 2026-10-17 14:20 UTC - Applied a lesson
 
-- Lesson: L009 - Generic inverse
+- Lesson: L010 - Rooms and devices
 - Result: Validated: the knowledge base loaded in SBCL and inference reached a fixpoint.
-- Knowledge now: 13 rules, 13 given facts, 39 facts after inference
+- Knowledge now: 14 rules, 21 given facts, 51 facts after inference
 

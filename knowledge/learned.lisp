@@ -44,3 +44,15 @@
 ;; --- L009: Generic inverse (applied 2026-10-17 13:58 UTC) ---
 ;; inverse-relation facts such as (inverse-relation depends-on prerequisite-of) create the reverse relation automatically.
 (rule generic-inverse-rule (if (inverse-relation ?r ?s) (?r ?a ?b)) (then (?s ?b ?a)))
+
+;; --- L010: Rooms and devices (applied 2026-10-17 14:20 UTC) ---
+;; Starter home model: which devices are in which rooms, and what kind each one is.
+(fact (device-in lamp-1 lounge))
+(fact (device-in lamp-2 study))
+(fact (device-in heater lounge))
+(fact (device-in speaker-1 study))
+(fact (device-type lamp-1 light))
+(fact (device-type lamp-2 light))
+(fact (device-type heater climate))
+(fact (device-type speaker-1 audio))
+(rule room-contains-rule (if (device-in ?d ?r)) (then (room-contains ?r ?d)))
