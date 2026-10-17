@@ -154,3 +154,15 @@
 (fact (parent erin frank))
 (fact (parent erin grace))
 (fact (parent dave hank))
+
+;; --- L024: Gender facts (applied 2026-10-17 19:43 UTC) ---
+;; Records who is female or male so relations can be named precisely.
+(fact (female alice))
+(fact (female erin))
+(fact (female carol))
+(fact (female ivy))
+(fact (female grace))
+(fact (male bob))
+(fact (male dave))
+(fact (male frank))
+(fact (male hank))
