@@ -126,3 +126,10 @@
 (fact (role-grants editor edit))
 (fact (role-grants viewer view))
 (rule permission-rule (if (user-role ?u ?r) (role-grants ?r ?p)) (then (permitted ?u ?p)))
+
+;; --- L020: Role hierarchy (applied 2026-10-17 18:05 UTC) ---
+;; Higher roles inherit everything lower roles are allowed to do.
+(fact (role-inherits admin editor))
+(fact (role-inherits editor viewer))
+(fact (transitive-relation role-inherits))
+(rule role-inherits-grants-rule (if (role-inherits ?r ?s) (role-grants ?s ?p)) (then (role-grants ?r ?p)))
