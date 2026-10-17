@@ -61,3 +61,10 @@
 ;; Answers what kinds of device a room has and which lights are in which room.
 (rule room-has-type-rule (if (device-in ?d ?r) (device-type ?d ?t)) (then (room-has-type ?r ?t)))
 (rule light-in-rule (if (device-in ?d ?r) (device-type ?d light)) (then (light-in ?d ?r)))
+
+;; --- L012: Presence and lights (applied 2026-10-17 15:05 UTC) ---
+;; Knows who is in which room and suggests turning on the lights where someone is; explain shows why.
+(fact (at ana study))
+(fact (at ben lounge))
+(rule occupied-rule (if (at ?p ?r)) (then (occupied ?r)))
+(rule suggest-light-rule (if (at ?p ?r) (light-in ?d ?r)) (then (suggest turn-on ?d)))

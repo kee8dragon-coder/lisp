@@ -1,8 +1,8 @@
 # Latest automation run
 
-### 2026-10-17 14:46 UTC - Applied a lesson
+### 2026-10-17 15:05 UTC - Applied a lesson
 
-- Lesson: L011 - Device lookups
+- Lesson: L012 - Presence and lights
 - Result: Validated: the knowledge base loaded in SBCL and inference reached a fixpoint.
-- Knowledge now: 16 rules, 21 given facts, 57 facts after inference
+- Knowledge now: 18 rules, 23 given facts, 63 facts after inference
 
