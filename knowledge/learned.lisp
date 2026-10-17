@@ -186,3 +186,8 @@
 ;; A female pibling is an aunt and a male pibling is an uncle.
 (rule aunt-rule (if (pibling ?a ?c) (female ?a)) (then (aunt ?a ?c)))
 (rule uncle-rule (if (pibling ?a ?c) (male ?a)) (then (uncle ?a ?c)))
+
+;; --- L029: Child and descendant (applied 2026-10-17 21:33 UTC) ---
+;; The reverse of parent and of ancestor.
+(rule child-rule (if (parent ?p ?c)) (then (child ?c ?p)))
+(rule descendant-rule (if (ancestor ?a ?d)) (then (descendant ?d ?a)))
