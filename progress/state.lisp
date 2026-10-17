@@ -2,9 +2,12 @@
 (:APPLIED
  ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009" "L010" "L011" "L012" "L013" "L014"
   "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024" "L025" "L026" "L027" "L028"
-  "L029" "L030" "L031" "L032")
- :FAILED NIL :RUNS 32 :LOG
- ((:TIME "2026-10-17 22:38 UTC" :STATUS :APPLIED :LESSON "L032" :TITLE "Second parents" :NOTE
+  "L029" "L030" "L031" "L032" "L033")
+ :FAILED NIL :RUNS 33 :LOG
+ ((:TIME "2026-10-17 22:57 UTC" :STATUS :APPLIED :LESSON "L033" :TITLE "Co-parents" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 42 :GIVEN 86 :TOTAL 318))
+  (:TIME "2026-10-17 22:38 UTC" :STATUS :APPLIED :LESSON "L032" :TITLE "Second parents" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 41 :GIVEN 86 :TOTAL 312))
   (:TIME "2026-10-17 22:13 UTC" :STATUS :APPLIED :LESSON "L031" :TITLE "Marriage and in-laws" :NOTE
@@ -91,7 +94,4 @@
    (:RULES 9 :GIVEN 13 :TOTAL 39))
   (:TIME "2026-10-16 10:33 UTC" :STATUS :APPLIED :LESSON "L004" :TITLE "Small animal taxonomy"
    :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 8 :GIVEN 10 :TOTAL 28))
-  (:TIME "2026-10-16 10:32 UTC" :STATUS :APPLIED :LESSON "L003" :TITLE "Aunt or uncle (pibling)"
-   :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 7 :GIVEN 5 :TOTAL 20))))
+   (:RULES 8 :GIVEN 10 :TOTAL 28))))

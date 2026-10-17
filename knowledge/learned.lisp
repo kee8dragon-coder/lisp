@@ -214,3 +214,7 @@
 (fact (male leo))
 (fact (female nina))
 (fact (female olga))
+
+;; --- L033: Co-parents (applied 2026-10-17 22:57 UTC) ---
+;; Two different people who are parents of the same child.
+(rule co-parent-rule (if (parent ?a ?c) (parent ?b ?c) (different ?a ?b)) (then (co-parent ?a ?b)))
