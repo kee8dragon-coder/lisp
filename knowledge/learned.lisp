@@ -36,3 +36,7 @@
 ;; --- L007: Generic transitivity (applied 2026-10-17 13:07 UTC) ---
 ;; Any relation declared with transitive-relation is chained automatically (a to b and b to c gives a to c).
 (rule generic-transitive-rule (if (transitive-relation ?r) (?r ?a ?b) (?r ?b ?c)) (then (?r ?a ?c)))
+
+;; --- L008: Generic symmetry (applied 2026-10-17 13:34 UTC) ---
+;; Any relation declared with symmetric-relation works in both directions.
+(rule generic-symmetric-rule (if (symmetric-relation ?r) (?r ?a ?b)) (then (?r ?b ?a)))
