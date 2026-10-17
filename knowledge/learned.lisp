@@ -40,3 +40,7 @@
 ;; --- L008: Generic symmetry (applied 2026-10-17 13:34 UTC) ---
 ;; Any relation declared with symmetric-relation works in both directions.
 (rule generic-symmetric-rule (if (symmetric-relation ?r) (?r ?a ?b)) (then (?r ?b ?a)))
+
+;; --- L009: Generic inverse (applied 2026-10-17 13:58 UTC) ---
+;; inverse-relation facts such as (inverse-relation depends-on prerequisite-of) create the reverse relation automatically.
+(rule generic-inverse-rule (if (inverse-relation ?r ?s) (?r ?a ?b)) (then (?s ?b ?a)))

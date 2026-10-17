@@ -1,6 +1,9 @@
 ;;;; Written by the automation. Delete this file to reset progress.
-(:APPLIED ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008") :FAILED NIL :RUNS 8 :LOG
- ((:TIME "2026-10-17 13:34 UTC" :STATUS :APPLIED :LESSON "L008" :TITLE "Generic symmetry" :NOTE
+(:APPLIED ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009") :FAILED NIL :RUNS 9 :LOG
+ ((:TIME "2026-10-17 13:58 UTC" :STATUS :APPLIED :LESSON "L009" :TITLE "Generic inverse" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 13 :GIVEN 13 :TOTAL 39))
+  (:TIME "2026-10-17 13:34 UTC" :STATUS :APPLIED :LESSON "L008" :TITLE "Generic symmetry" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 12 :GIVEN 13 :TOTAL 39))
   (:TIME "2026-10-17 13:07 UTC" :STATUS :APPLIED :LESSON "L007" :TITLE "Generic transitivity" :NOTE
