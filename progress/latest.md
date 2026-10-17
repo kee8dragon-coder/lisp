@@ -1,8 +1,8 @@
 # Latest automation run
 
-### 2026-10-17 20:23 UTC - Applied a lesson
+### 2026-10-17 20:48 UTC - Applied a lesson
 
-- Lesson: L026 - Brother and sister
+- Lesson: L027 - Grandmother and grandfather
 - Result: Validated: the knowledge base loaded in SBCL and inference reached a fixpoint.
-- Knowledge now: 33 rules, 74 given facts, 203 facts after inference
+- Knowledge now: 35 rules, 74 given facts, 209 facts after inference
 

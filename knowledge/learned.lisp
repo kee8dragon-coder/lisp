@@ -176,3 +176,8 @@
 ;; A male sibling is a brother and a female sibling is a sister.
 (rule brother-rule (if (sibling ?a ?b) (male ?a)) (then (brother ?a ?b)))
 (rule sister-rule (if (sibling ?a ?b) (female ?a)) (then (sister ?a ?b)))
+
+;; --- L027: Grandmother and grandfather (applied 2026-10-17 20:48 UTC) ---
+;; Grandparents named by gender.
+(rule grandmother-rule (if (grandparent ?g ?c) (female ?g)) (then (grandmother ?g ?c)))
+(rule grandfather-rule (if (grandparent ?g ?c) (male ?g)) (then (grandfather ?g ?c)))
