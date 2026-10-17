@@ -77,3 +77,13 @@
 (fact (device-type speaker-2 audio))
 (rule suggest-music-rule (if (at ?p ?r) (prefers ?p music) (device-in ?d ?r) (device-type ?d audio)) (then (suggest play-music ?d)))
 (rule suggest-mute-rule (if (at ?p ?r) (prefers ?p quiet) (device-in ?d ?r) (device-type ?d audio)) (then (suggest mute ?d)))
+
+;; --- L014: System components (applied 2026-10-17 15:56 UTC) ---
+;; Which parts of a system need which other parts; chains are followed using the generic transitivity rule.
+(fact (needs cooling power))
+(fact (needs compute power))
+(fact (needs compute cooling))
+(fact (needs network power))
+(fact (needs assistant compute))
+(fact (needs assistant network))
+(fact (transitive-relation needs))

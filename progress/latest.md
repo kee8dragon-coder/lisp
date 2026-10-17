@@ -1,8 +1,8 @@
 # Latest automation run
 
-### 2026-10-17 15:30 UTC - Applied a lesson
+### 2026-10-17 15:56 UTC - Applied a lesson
 
-- Lesson: L013 - Preferences
+- Lesson: L014 - System components
 - Result: Validated: the knowledge base loaded in SBCL and inference reached a fixpoint.
-- Knowledge now: 20 rules, 27 given facts, 71 facts after inference
+- Knowledge now: 20 rules, 34 given facts, 80 facts after inference
 
