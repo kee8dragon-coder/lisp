@@ -1,9 +1,12 @@
 ;;;; Written by the automation. Delete this file to reset progress.
 (:APPLIED
  ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009" "L010" "L011" "L012" "L013" "L014"
-  "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024")
- :FAILED NIL :RUNS 24 :LOG
- ((:TIME "2026-10-17 19:43 UTC" :STATUS :APPLIED :LESSON "L024" :TITLE "Gender facts" :NOTE
+  "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024" "L025")
+ :FAILED NIL :RUNS 25 :LOG
+ ((:TIME "2026-10-17 20:00 UTC" :STATUS :APPLIED :LESSON "L025" :TITLE "Mother and father" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 31 :GIVEN 74 :TOTAL 197))
+  (:TIME "2026-10-17 19:43 UTC" :STATUS :APPLIED :LESSON "L024" :TITLE "Gender facts" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 29 :GIVEN 74 :TOTAL 189))
   (:TIME "2026-10-17 19:21 UTC" :STATUS :APPLIED :LESSON "L023" :TITLE "More family members" :NOTE

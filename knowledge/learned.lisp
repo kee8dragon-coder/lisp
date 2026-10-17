@@ -166,3 +166,8 @@
 (fact (male dave))
 (fact (male frank))
 (fact (male hank))
+
+;; --- L025: Mother and father (applied 2026-10-17 20:00 UTC) ---
+;; A female parent is a mother and a male parent is a father.
+(rule mother-rule (if (parent ?p ?c) (female ?p)) (then (mother ?p ?c)))
+(rule father-rule (if (parent ?p ?c) (male ?p)) (then (father ?p ?c)))
