@@ -116,3 +116,13 @@
 ;; --- L018: Schedule clashes (applied 2026-10-17 17:29 UTC) ---
 ;; Flags a person who attends two different events in the same time slot.
 (rule clash-rule (if (attends ?p ?a) (attends ?p ?b) (scheduled ?a ?t) (scheduled ?b ?t) (different ?a ?b)) (then (clash ?p ?a ?b)))
+
+;; --- L019: Roles and permissions (applied 2026-10-17 17:51 UTC) ---
+;; Who holds which role and what each role allows, so the assistant can say who may do what.
+(fact (user-role ana admin))
+(fact (user-role ben editor))
+(fact (user-role cai viewer))
+(fact (role-grants admin manage))
+(fact (role-grants editor edit))
+(fact (role-grants viewer view))
+(rule permission-rule (if (user-role ?u ?r) (role-grants ?r ?p)) (then (permitted ?u ?p)))
