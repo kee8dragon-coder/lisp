@@ -1,7 +1,11 @@
 ;;;; Written by the automation. Delete this file to reset progress.
-(:APPLIED ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009" "L010" "L011" "L012")
- :FAILED NIL :RUNS 12 :LOG
- ((:TIME "2026-10-17 15:05 UTC" :STATUS :APPLIED :LESSON "L012" :TITLE "Presence and lights" :NOTE
+(:APPLIED
+ ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009" "L010" "L011" "L012" "L013")
+ :FAILED NIL :RUNS 13 :LOG
+ ((:TIME "2026-10-17 15:30 UTC" :STATUS :APPLIED :LESSON "L013" :TITLE "Preferences" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 20 :GIVEN 27 :TOTAL 71))
+  (:TIME "2026-10-17 15:05 UTC" :STATUS :APPLIED :LESSON "L012" :TITLE "Presence and lights" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 18 :GIVEN 23 :TOTAL 63))
   (:TIME "2026-10-17 14:46 UTC" :STATUS :APPLIED :LESSON "L011" :TITLE "Device lookups" :NOTE

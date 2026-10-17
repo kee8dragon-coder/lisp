@@ -68,3 +68,12 @@
 (fact (at ben lounge))
 (rule occupied-rule (if (at ?p ?r)) (then (occupied ?r)))
 (rule suggest-light-rule (if (at ?p ?r) (light-in ?d ?r)) (then (suggest turn-on ?d)))
+
+;; --- L013: Preferences (applied 2026-10-17 15:30 UTC) ---
+;; Uses what people prefer to suggest playing music for one person and muting the speaker for another.
+(fact (prefers ana quiet))
+(fact (prefers ben music))
+(fact (device-in speaker-2 lounge))
+(fact (device-type speaker-2 audio))
+(rule suggest-music-rule (if (at ?p ?r) (prefers ?p music) (device-in ?d ?r) (device-type ?d audio)) (then (suggest play-music ?d)))
+(rule suggest-mute-rule (if (at ?p ?r) (prefers ?p quiet) (device-in ?d ?r) (device-type ?d audio)) (then (suggest mute ?d)))

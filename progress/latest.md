@@ -1,8 +1,8 @@
 # Latest automation run
 
-### 2026-10-17 15:05 UTC - Applied a lesson
+### 2026-10-17 15:30 UTC - Applied a lesson
 
-- Lesson: L012 - Presence and lights
+- Lesson: L013 - Preferences
 - Result: Validated: the knowledge base loaded in SBCL and inference reached a fixpoint.
-- Knowledge now: 18 rules, 23 given facts, 63 facts after inference
+- Knowledge now: 20 rules, 27 given facts, 71 facts after inference
 
