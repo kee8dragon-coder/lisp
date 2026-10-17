@@ -230,3 +230,11 @@
 (fact (is-a shark fish))
 (fact (is-a frog amphibian))
 (fact (is-a amphibian animal))
+
+;; --- L035: More properties (applied 2026-10-17 23:35 UTC) ---
+;; More traits that animals inherit from their categories.
+(fact (has fish gills))
+(fact (has fish fins))
+(fact (has bird wings))
+(fact (has mammal milk))
+(fact (has amphibian moist-skin))
