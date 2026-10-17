@@ -2,9 +2,12 @@
 (:APPLIED
  ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009" "L010" "L011" "L012" "L013" "L014"
   "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024" "L025" "L026" "L027" "L028"
-  "L029" "L030" "L031" "L032" "L033" "L034" "L035")
- :FAILED NIL :RUNS 35 :LOG
- ((:TIME "2026-10-17 23:35 UTC" :STATUS :APPLIED :LESSON "L035" :TITLE "More properties" :NOTE
+  "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036")
+ :FAILED NIL :RUNS 36 :LOG
+ ((:TIME "2026-10-17 23:53 UTC" :STATUS :APPLIED :LESSON "L036" :TITLE "Abilities" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 43 :GIVEN 107 :TOTAL 380))
+  (:TIME "2026-10-17 23:35 UTC" :STATUS :APPLIED :LESSON "L035" :TITLE "More properties" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 42 :GIVEN 100 :TOTAL 364))
   (:TIME "2026-10-17 23:13 UTC" :STATUS :APPLIED :LESSON "L034" :TITLE "More animals" :NOTE
@@ -91,7 +94,4 @@
    (:RULES 12 :GIVEN 13 :TOTAL 39))
   (:TIME "2026-10-17 13:07 UTC" :STATUS :APPLIED :LESSON "L007" :TITLE "Generic transitivity" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 11 :GIVEN 13 :TOTAL 39))
-  (:TIME "2026-10-17 10:11 UTC" :STATUS :APPLIED :LESSON "L006" :TITLE "Cousin relation" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 10 :GIVEN 13 :TOTAL 39))))
+   (:RULES 11 :GIVEN 13 :TOTAL 39))))

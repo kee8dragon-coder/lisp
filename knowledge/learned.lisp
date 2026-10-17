@@ -238,3 +238,14 @@
 (fact (has bird wings))
 (fact (has mammal milk))
 (fact (has amphibian moist-skin))
+
+;; --- L036: Abilities (applied 2026-10-17 23:53 UTC) ---
+;; What animals can do; abilities of a category pass down to its members. Flying is listed per animal because not every bird flies.
+(fact (can sparrow fly))
+(fact (can eagle fly))
+(fact (can bat fly))
+(fact (can fish swim))
+(fact (can penguin swim))
+(fact (can bird lay-eggs))
+(fact (can mammal nurse-young))
+(rule can-inherit-rule (if (is-a ?x ?y) (can ?y ?a)) (then (can ?x ?a)))
