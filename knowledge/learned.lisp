@@ -142,3 +142,8 @@
 (fact (depends-on bundle build))
 (fact (transitive-relation depends-on))
 (fact (inverse-relation depends-on prerequisite-of))
+
+;; --- L022: Task progress (applied 2026-10-17 19:00 UTC) ---
+;; Notes finished work and shows which tasks have a finished prerequisite.
+(fact (done compile))
+(rule has-done-prerequisite-rule (if (done ?y) (depends-on ?x ?y)) (then (has-done-prerequisite ?x ?y)))
