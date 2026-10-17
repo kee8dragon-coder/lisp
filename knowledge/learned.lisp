@@ -133,3 +133,12 @@
 (fact (role-inherits editor viewer))
 (fact (transitive-relation role-inherits))
 (rule role-inherits-grants-rule (if (role-inherits ?r ?s) (role-grants ?s ?p)) (then (role-grants ?r ?p)))
+
+;; --- L021: Task dependencies (applied 2026-10-17 18:33 UTC) ---
+;; Which tasks depend on which; indirect dependencies and the reverse relation are derived automatically.
+(fact (depends-on test build))
+(fact (depends-on build compile))
+(fact (depends-on deploy test))
+(fact (depends-on bundle build))
+(fact (transitive-relation depends-on))
+(fact (inverse-relation depends-on prerequisite-of))
