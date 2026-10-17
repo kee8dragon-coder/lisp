@@ -56,3 +56,8 @@
 (fact (device-type heater climate))
 (fact (device-type speaker-1 audio))
 (rule room-contains-rule (if (device-in ?d ?r)) (then (room-contains ?r ?d)))
+
+;; --- L011: Device lookups (applied 2026-10-17 14:46 UTC) ---
+;; Answers what kinds of device a room has and which lights are in which room.
+(rule room-has-type-rule (if (device-in ?d ?r) (device-type ?d ?t)) (then (room-has-type ?r ?t)))
+(rule light-in-rule (if (device-in ?d ?r) (device-type ?d light)) (then (light-in ?d ?r)))

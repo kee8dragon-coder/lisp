@@ -1,7 +1,10 @@
 ;;;; Written by the automation. Delete this file to reset progress.
-(:APPLIED ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009" "L010") :FAILED NIL :RUNS
- 10 :LOG
- ((:TIME "2026-10-17 14:20 UTC" :STATUS :APPLIED :LESSON "L010" :TITLE "Rooms and devices" :NOTE
+(:APPLIED ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009" "L010" "L011") :FAILED
+ NIL :RUNS 11 :LOG
+ ((:TIME "2026-10-17 14:46 UTC" :STATUS :APPLIED :LESSON "L011" :TITLE "Device lookups" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 16 :GIVEN 21 :TOTAL 57))
+  (:TIME "2026-10-17 14:20 UTC" :STATUS :APPLIED :LESSON "L010" :TITLE "Rooms and devices" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 14 :GIVEN 21 :TOTAL 51))
   (:TIME "2026-10-17 13:58 UTC" :STATUS :APPLIED :LESSON "L009" :TITLE "Generic inverse" :NOTE
