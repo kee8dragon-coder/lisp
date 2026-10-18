@@ -437,3 +437,14 @@
 (fact (plans ana tomorrow outdoors))
 (fact (plans ben tomorrow indoors))
 (rule umbrella-rule (if (forecast ?d rain) (plans ?p ?d outdoors)) (then (suggest bring-umbrella ?p)))
+
+;; --- L060: Organisation chart (applied 2026-10-18 10:35 UTC) ---
+;; Who directly manages whom; management chains and reporting lines are derived automatically, and peers share the same direct manager.
+(fact (manages-directly rhea tom))
+(fact (manages-directly tom uma))
+(fact (manages-directly tom vic))
+(fact (manages-directly uma wes))
+(fact (transitive-relation manages))
+(fact (inverse-relation manages reports-to))
+(rule manages-base-rule (if (manages-directly ?m ?a)) (then (manages ?m ?a)))
+(rule peers-rule (if (manages-directly ?m ?a) (manages-directly ?m ?b) (different ?a ?b)) (then (peers ?a ?b)))
