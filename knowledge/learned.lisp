@@ -357,3 +357,8 @@
 (fact (part-of rim wheel))
 (fact (transitive-relation part-of))
 (fact (inverse-relation part-of has-part))
+
+;; --- L050: Time of day and lighting (applied 2026-10-18 06:09 UTC) ---
+;; A demo time of day; in the evening the assistant suggests dimming the lights in occupied rooms.
+(fact (time-of-day evening))
+(rule evening-dim-rule (if (time-of-day evening) (at ?p ?r) (light-in ?d ?r)) (then (suggest dim ?d)))
