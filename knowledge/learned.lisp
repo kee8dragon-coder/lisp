@@ -258,3 +258,14 @@
 (fact (friend-of eli fay))
 (fact (symmetric-relation friend-of))
 (rule friend-of-friend-rule (if (friend-of ?a ?b) (friend-of ?b ?c) (different ?a ?c)) (then (friend-of-friend ?a ?c)))
+
+;; --- L038: Graph reachability (applied 2026-10-18 00:47 UTC) ---
+;; A small network of nodes; works out which nodes can be reached from which.
+(fact (edge n1 n2))
+(fact (edge n2 n3))
+(fact (edge n3 n4))
+(fact (edge n1 n5))
+(fact (edge n5 n6))
+(fact (edge n6 n3))
+(rule reach-direct-rule (if (edge ?a ?b)) (then (reachable ?a ?b)))
+(rule reach-step-rule (if (edge ?a ?b) (reachable ?b ?c)) (then (reachable ?a ?c)))
