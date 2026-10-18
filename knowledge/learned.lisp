@@ -370,3 +370,11 @@
 (fact (type-can audio play-music))
 (fact (type-can climate heat))
 (rule device-can-rule (if (device-type ?d ?t) (type-can ?t ?a)) (then (device-can ?d ?a)))
+
+;; --- L052: Device state (applied 2026-10-18 07:17 UTC) ---
+;; Demo on/off readings for devices, and which rooms currently have a light on.
+(fact (state lamp-1 off))
+(fact (state lamp-2 off))
+(fact (state heater on))
+(rule device-on-rule (if (state ?d on)) (then (is-on ?d)))
+(rule lit-rule (if (is-on ?d) (device-type ?d light) (device-in ?d ?r)) (then (lit ?r)))
