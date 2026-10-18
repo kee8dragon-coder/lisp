@@ -378,3 +378,11 @@
 (fact (state heater on))
 (rule device-on-rule (if (state ?d on)) (then (is-on ?d)))
 (rule lit-rule (if (is-on ?d) (device-type ?d light) (device-in ?d ?r)) (then (lit ?r)))
+
+;; --- L053: Energy saving (applied 2026-10-18 07:46 UTC) ---
+;; Adds a kitchen with a lamp left on in an empty room; the assistant suggests switching off anything that is on in an empty room.
+(fact (device-in lamp-3 kitchen))
+(fact (device-type lamp-3 light))
+(fact (state lamp-3 on))
+(fact (occupancy kitchen empty))
+(rule energy-saving-rule (if (occupancy ?r empty) (device-in ?d ?r) (state ?d on)) (then (suggest turn-off ?d)))
