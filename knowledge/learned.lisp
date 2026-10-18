@@ -296,3 +296,15 @@
 (fact (taller-than cai dee))
 (fact (transitive-relation taller-than))
 (fact (inverse-relation taller-than shorter-than))
+
+;; --- L043: Places (applied 2026-10-18 03:05 UTC) ---
+;; Where places are, nested from city to country to continent; located-in is chained automatically.
+(fact (located-in singapore asia))
+(fact (located-in tokyo japan))
+(fact (located-in kyoto japan))
+(fact (located-in japan asia))
+(fact (located-in paris france))
+(fact (located-in france europe))
+(fact (located-in asia earth))
+(fact (located-in europe earth))
+(fact (transitive-relation located-in))

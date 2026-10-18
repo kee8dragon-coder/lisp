@@ -2,10 +2,13 @@
 (:APPLIED
  ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009" "L010" "L011" "L012" "L013" "L014"
   "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024" "L025" "L026" "L027" "L028"
-  "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040" "L041"
-  "L042")
- :FAILED NIL :RUNS 42 :LOG
- ((:TIME "2026-10-18 02:40 UTC" :STATUS :APPLIED :LESSON "L042" :TITLE "Ranking people" :NOTE
+  "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040" "L041" "L042"
+  "L043")
+ :FAILED NIL :RUNS 43 :LOG
+ ((:TIME "2026-10-18 03:05 UTC" :STATUS :APPLIED :LESSON "L043" :TITLE "Places" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 49 :GIVEN 139 :TOTAL 521))
+  (:TIME "2026-10-18 02:40 UTC" :STATUS :APPLIED :LESSON "L042" :TITLE "Ranking people" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 49 :GIVEN 130 :TOTAL 503))
   (:TIME "2026-10-18 02:11 UTC" :STATUS :APPLIED :LESSON "L041" :TITLE "Greater-than and between"
@@ -92,7 +95,4 @@
    (:RULES 22 :GIVEN 38 :TOTAL 86))
   (:TIME "2026-10-17 15:56 UTC" :STATUS :APPLIED :LESSON "L014" :TITLE "System components" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 20 :GIVEN 34 :TOTAL 80))
-  (:TIME "2026-10-17 15:30 UTC" :STATUS :APPLIED :LESSON "L013" :TITLE "Preferences" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 20 :GIVEN 27 :TOTAL 71))))
+   (:RULES 20 :GIVEN 34 :TOTAL 80))))
