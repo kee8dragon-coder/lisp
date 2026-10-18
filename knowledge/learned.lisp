@@ -423,3 +423,10 @@
 (fact (priority taxes medium))
 (rule urgent-rule (if (overdue ?t) (priority ?t high)) (then (urgent ?t)))
 (rule focus-rule (if (priority ?t high) (owns ?p ?t)) (then (focus ?p ?t)))
+
+;; --- L058: Shopping and stock (applied 2026-10-18 09:51 UTC) ---
+;; Demo pantry levels; anything running low becomes a suggestion to buy it.
+(fact (stock milk low))
+(fact (stock rice ok))
+(fact (stock coffee low))
+(rule restock-rule (if (stock ?i low)) (then (suggest buy ?i)))
