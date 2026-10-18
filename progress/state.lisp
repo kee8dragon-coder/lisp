@@ -2,9 +2,12 @@
 (:APPLIED
  ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009" "L010" "L011" "L012" "L013" "L014"
   "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024" "L025" "L026" "L027" "L028"
-  "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038")
- :FAILED NIL :RUNS 38 :LOG
- ((:TIME "2026-10-18 00:47 UTC" :STATUS :APPLIED :LESSON "L038" :TITLE "Graph reachability" :NOTE
+  "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039")
+ :FAILED NIL :RUNS 39 :LOG
+ ((:TIME "2026-10-18 01:19 UTC" :STATUS :APPLIED :LESSON "L039" :TITLE "Shared destinations" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 47 :GIVEN 118 :TOTAL 432))
+  (:TIME "2026-10-18 00:47 UTC" :STATUS :APPLIED :LESSON "L038" :TITLE "Graph reachability" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 46 :GIVEN 118 :TOTAL 412))
   (:TIME "2026-10-18 00:07 UTC" :STATUS :APPLIED :LESSON "L037" :TITLE "Friendship" :NOTE
@@ -91,7 +94,4 @@
    (:RULES 16 :GIVEN 21 :TOTAL 57))
   (:TIME "2026-10-17 14:20 UTC" :STATUS :APPLIED :LESSON "L010" :TITLE "Rooms and devices" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 14 :GIVEN 21 :TOTAL 51))
-  (:TIME "2026-10-17 13:58 UTC" :STATUS :APPLIED :LESSON "L009" :TITLE "Generic inverse" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 13 :GIVEN 13 :TOTAL 39))))
+   (:RULES 14 :GIVEN 21 :TOTAL 51))))

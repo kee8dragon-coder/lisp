@@ -269,3 +269,7 @@
 (fact (edge n6 n3))
 (rule reach-direct-rule (if (edge ?a ?b)) (then (reachable ?a ?b)))
 (rule reach-step-rule (if (edge ?a ?b) (reachable ?b ?c)) (then (reachable ?a ?c)))
+
+;; --- L039: Shared destinations (applied 2026-10-18 01:19 UTC) ---
+;; Two different nodes that can both reach the same node.
+(rule common-target-rule (if (reachable ?a ?t) (reachable ?b ?t) (different ?a ?b)) (then (shares-target ?a ?b)))
