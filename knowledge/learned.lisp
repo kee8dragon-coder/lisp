@@ -517,3 +517,10 @@
 (fact (has rectangle right-angles))
 (fact (has rhombus equal-sides))
 (fact (disjoint triangle quadrilateral))
+
+;; --- L068: Colour mixing (applied 2026-10-18 13:58 UTC) ---
+;; Which colours mix to make which; the order of the two colours does not matter.
+(fact (mix red blue purple))
+(fact (mix red yellow orange))
+(fact (mix blue yellow green))
+(rule mix-symmetric-rule (if (mix ?a ?b ?c)) (then (mix ?b ?a ?c)))
