@@ -480,3 +480,14 @@
 (fact (implementation-of ecl common-lisp))
 (fact (implementation-of clisp common-lisp))
 (rule implementation-family-rule (if (implementation-of ?i ?d) (dialect-of ?d ?l)) (then (implementation-of ?i ?l)))
+
+;; --- L064: Solar system (applied 2026-10-18 12:03 UTC) ---
+;; What orbits what; in-system-of follows the chain, so a moon is in the system of the Sun.
+(fact (orbits mercury sun))
+(fact (orbits venus sun))
+(fact (orbits earth sun))
+(fact (orbits mars sun))
+(fact (orbits moon earth))
+(fact (orbits phobos mars))
+(fact (transitive-relation in-system-of))
+(rule in-system-base-rule (if (orbits ?a ?b)) (then (in-system-of ?a ?b)))
