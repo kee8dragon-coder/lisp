@@ -315,3 +315,9 @@
 (fact (capital-of paris france))
 (rule capital-located-rule (if (capital-of ?c ?n)) (then (located-in ?c ?n)))
 (rule capital-city-rule (if (capital-of ?c ?n)) (then (city ?c)))
+
+;; --- L045: Same country (applied 2026-10-18 04:02 UTC) ---
+;; Two different places inside the same country.
+(fact (country japan))
+(fact (country france))
+(rule same-country-rule (if (located-in ?a ?c) (located-in ?b ?c) (country ?c) (different ?a ?b)) (then (same-country ?a ?b)))

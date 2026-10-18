@@ -3,9 +3,12 @@
  ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009" "L010" "L011" "L012" "L013" "L014"
   "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024" "L025" "L026" "L027" "L028"
   "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040" "L041" "L042"
-  "L043" "L044")
- :FAILED NIL :RUNS 44 :LOG
- ((:TIME "2026-10-18 03:32 UTC" :STATUS :APPLIED :LESSON "L044" :TITLE "Capitals" :NOTE
+  "L043" "L044" "L045")
+ :FAILED NIL :RUNS 45 :LOG
+ ((:TIME "2026-10-18 04:02 UTC" :STATUS :APPLIED :LESSON "L045" :TITLE "Same country" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 52 :GIVEN 143 :TOTAL 529))
+  (:TIME "2026-10-18 03:32 UTC" :STATUS :APPLIED :LESSON "L044" :TITLE "Capitals" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 51 :GIVEN 141 :TOTAL 525))
   (:TIME "2026-10-18 03:05 UTC" :STATUS :APPLIED :LESSON "L043" :TITLE "Places" :NOTE
@@ -92,7 +95,4 @@
    (:RULES 25 :GIVEN 45 :TOTAL 98))
   (:TIME "2026-10-17 16:44 UTC" :STATUS :APPLIED :LESSON "L016" :TITLE "Alerts" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 24 :GIVEN 38 :TOTAL 88))
-  (:TIME "2026-10-17 16:15 UTC" :STATUS :APPLIED :LESSON "L015" :TITLE "Status and failures" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 22 :GIVEN 38 :TOTAL 86))))
+   (:RULES 24 :GIVEN 38 :TOTAL 88))))
