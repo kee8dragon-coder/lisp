@@ -470,3 +470,13 @@
 (fact (topic-of scheduling meetings))
 (fact (topic-of diagnostics system-status))
 (rule can-help-rule (if (skill assistant ?s) (topic-of ?s ?t)) (then (can-help-with ?t)))
+
+;; --- L063: Programming languages (applied 2026-10-18 11:44 UTC) ---
+;; Lisp dialects and their implementations; an implementation of a dialect is also an implementation of the wider family.
+(fact (dialect-of common-lisp lisp))
+(fact (dialect-of scheme lisp))
+(fact (dialect-of clojure lisp))
+(fact (implementation-of sbcl common-lisp))
+(fact (implementation-of ecl common-lisp))
+(fact (implementation-of clisp common-lisp))
+(rule implementation-family-rule (if (implementation-of ?i ?d) (dialect-of ?d ?l)) (then (implementation-of ?i ?l)))

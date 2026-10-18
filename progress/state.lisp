@@ -4,9 +4,12 @@
   "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024" "L025" "L026" "L027" "L028"
   "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040" "L041" "L042"
   "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050" "L051" "L052" "L053" "L054" "L055" "L056"
-  "L057" "L058" "L059" "L060" "L061" "L062")
- :FAILED NIL :RUNS 62 :LOG
- ((:TIME "2026-10-18 11:20 UTC" :STATUS :APPLIED :LESSON "L062" :TITLE "What the assistant can do"
+  "L057" "L058" "L059" "L060" "L061" "L062" "L063")
+ :FAILED NIL :RUNS 63 :LOG
+ ((:TIME "2026-10-18 11:44 UTC" :STATUS :APPLIED :LESSON "L063" :TITLE "Programming languages"
+   :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 75 :GIVEN 225 :TOTAL 741))
+  (:TIME "2026-10-18 11:20 UTC" :STATUS :APPLIED :LESSON "L062" :TITLE "What the assistant can do"
    :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 74 :GIVEN 219 :TOTAL 732))
   (:TIME "2026-10-18 10:58 UTC" :STATUS :APPLIED :LESSON "L061" :TITLE "Transit network" :NOTE
@@ -93,7 +96,4 @@
    (:RULES 42 :GIVEN 100 :TOTAL 364))
   (:TIME "2026-10-17 23:13 UTC" :STATUS :APPLIED :LESSON "L034" :TITLE "More animals" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 42 :GIVEN 95 :TOTAL 347))
-  (:TIME "2026-10-17 22:57 UTC" :STATUS :APPLIED :LESSON "L033" :TITLE "Co-parents" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 42 :GIVEN 86 :TOTAL 318))))
+   (:RULES 42 :GIVEN 95 :TOTAL 347))))
