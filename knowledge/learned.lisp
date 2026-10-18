@@ -329,3 +329,12 @@
 (fact (before dinner sleep))
 (fact (transitive-relation before))
 (fact (inverse-relation before after))
+
+;; --- L047: Disjoint categories and conflicts (applied 2026-10-18 04:58 UTC) ---
+;; Some categories cannot overlap; if something is placed in two of them, a conflict is reported.
+(fact (disjoint mammal bird))
+(fact (disjoint mammal fish))
+(fact (disjoint bird fish))
+(fact (disjoint mammal amphibian))
+(fact (symmetric-relation disjoint))
+(rule conflict-rule (if (disjoint ?a ?b) (is-a ?x ?a) (is-a ?x ?b)) (then (conflict ?x ?a ?b)))
