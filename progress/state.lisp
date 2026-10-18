@@ -3,9 +3,12 @@
  ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009" "L010" "L011" "L012" "L013" "L014"
   "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024" "L025" "L026" "L027" "L028"
   "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040" "L041" "L042"
-  "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050")
- :FAILED NIL :RUNS 50 :LOG
- ((:TIME "2026-10-18 06:09 UTC" :STATUS :APPLIED :LESSON "L050" :TITLE "Time of day and lighting"
+  "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050" "L051")
+ :FAILED NIL :RUNS 51 :LOG
+ ((:TIME "2026-10-18 06:41 UTC" :STATUS :APPLIED :LESSON "L051" :TITLE "Device capabilities" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 57 :GIVEN 169 :TOTAL 590))
+  (:TIME "2026-10-18 06:09 UTC" :STATUS :APPLIED :LESSON "L050" :TITLE "Time of day and lighting"
    :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 56 :GIVEN 165 :TOTAL 579))
   (:TIME "2026-10-18 05:49 UTC" :STATUS :APPLIED :LESSON "L049" :TITLE "Parts and wholes" :NOTE
@@ -93,7 +96,4 @@
    (:RULES 29 :GIVEN 65 :TOTAL 180))
   (:TIME "2026-10-17 19:00 UTC" :STATUS :APPLIED :LESSON "L022" :TITLE "Task progress" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 29 :GIVEN 61 :TOTAL 142))
-  (:TIME "2026-10-17 18:33 UTC" :STATUS :APPLIED :LESSON "L021" :TITLE "Task dependencies" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 28 :GIVEN 60 :TOTAL 137))))
+   (:RULES 29 :GIVEN 61 :TOTAL 142))))

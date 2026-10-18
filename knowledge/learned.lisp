@@ -362,3 +362,11 @@
 ;; A demo time of day; in the evening the assistant suggests dimming the lights in occupied rooms.
 (fact (time-of-day evening))
 (rule evening-dim-rule (if (time-of-day evening) (at ?p ?r) (light-in ?d ?r)) (then (suggest dim ?d)))
+
+;; --- L051: Device capabilities (applied 2026-10-18 06:41 UTC) ---
+;; What each kind of device can do, so the assistant can say what a particular device is able to do.
+(fact (type-can light dim))
+(fact (type-can light switch))
+(fact (type-can audio play-music))
+(fact (type-can climate heat))
+(rule device-can-rule (if (device-type ?d ?t) (type-can ?t ?a)) (then (device-can ?d ?a)))
