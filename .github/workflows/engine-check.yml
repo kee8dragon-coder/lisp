@@ -1,0 +1,85 @@
+name: engine-check
+
+# Read-only check using a real SBCL. It never pushes and uses no secrets.
+# Runs on pushes to engine-phase-1 or check/** branches, or by hand from the Actions tab.
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - engine-phase-1
+      - "check/**"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out this branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install SBCL
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends sbcl
+          sbcl --version
+
+      - name: Use the real learned state from the autoevolve branch (read-only, never committed)
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --heads origin autoevolve > /dev/null 2>&1; then
+            git checkout origin/autoevolve -- knowledge/learned.lisp progress/state.lisp
+            echo "Using learned state from the autoevolve branch."
+          else
+            echo "No autoevolve branch yet; starting from base knowledge."
+          fi
+
+      - name: Load check (the same check the automation uses)
+        env:
+          SAI_MODE: validate
+        run: sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp
+
+      - name: Demo
+        run: sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp
+
+      - name: Apply every remaining lesson in this throwaway checkout
+        run: |
+          set -uo pipefail
+          for i in $(seq 1 100); do
+            if ! SAI_MODE=evolve sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp > /tmp/step.log 2>&1; then
+              cat /tmp/step.log
+              exit 1
+            fi
+            status="$(tr -cd 'a-z' < progress/latest-status.txt)"
+            lesson="$(sed -n 's/^- Lesson: //p' progress/latest.md | head -1)"
+            echo "step $i: $status $lesson"
+            case "$status" in
+              applied) ;;
+              noop) break ;;
+              *) cat /tmp/step.log; cat progress/latest.md; exit 1 ;;
+            esac
+          done
+
+      - name: Final validation
+        env:
+          SAI_MODE: validate
+        run: sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp
+
+      - name: Derived facts for the assistant predicates
+        env:
+          SAI_MODE: facts
+          SAI_PREDICATES: suggest,alert,empty-room,open-task,blocked,ready,overlaps,ends,low-battery,too-cold,days-left,due-soon,past-due,remaining,over-budget,unreported,no-access,unassigned,tick,square,wasted
+        run: sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## engine-check"
+            echo
+            sed -n '1,16p' PROGRESS.md || true
+          } >> "$GITHUB_STEP_SUMMARY"
