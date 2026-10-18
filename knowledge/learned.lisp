@@ -458,3 +458,15 @@
 (fact (symmetric-relation connected))
 (fact (transitive-relation can-travel))
 (rule can-travel-base-rule (if (connected ?a ?b)) (then (can-travel ?a ?b)))
+
+;; --- L062: What the assistant can do (applied 2026-10-18 11:20 UTC) ---
+;; A small self-description: the assistant lists the topics it can help with.
+(fact (skill assistant home-control))
+(fact (skill assistant scheduling))
+(fact (skill assistant diagnostics))
+(fact (skill assistant explanations))
+(fact (topic-of home-control lights))
+(fact (topic-of home-control music))
+(fact (topic-of scheduling meetings))
+(fact (topic-of diagnostics system-status))
+(rule can-help-rule (if (skill assistant ?s) (topic-of ?s ?t)) (then (can-help-with ?t)))
