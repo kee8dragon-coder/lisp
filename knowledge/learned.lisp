@@ -348,3 +348,12 @@
 (fact (enrolled ben physics))
 (rule student-of-rule (if (enrolled ?s ?c) (teaches ?t ?c)) (then (student-of ?s ?t)))
 (rule classmates-rule (if (enrolled ?a ?c) (enrolled ?b ?c) (different ?a ?b)) (then (classmates ?a ?b)))
+
+;; --- L049: Parts and wholes (applied 2026-10-18 05:49 UTC) ---
+;; What is part of what; chained so a spoke is part of the bike, with a has-part reverse.
+(fact (part-of wheel bike))
+(fact (part-of frame bike))
+(fact (part-of spoke wheel))
+(fact (part-of rim wheel))
+(fact (transitive-relation part-of))
+(fact (inverse-relation part-of has-part))
