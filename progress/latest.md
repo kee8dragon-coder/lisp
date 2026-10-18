@@ -1,8 +1,8 @@
 # Latest automation run
 
-### 2026-10-18 03:05 UTC - Applied a lesson
+### 2026-10-18 03:32 UTC - Applied a lesson
 
-- Lesson: L043 - Places
+- Lesson: L044 - Capitals
 - Result: Validated: the knowledge base loaded in SBCL and inference reached a fixpoint.
-- Knowledge now: 49 rules, 139 given facts, 521 facts after inference
+- Knowledge now: 51 rules, 141 given facts, 525 facts after inference
 

@@ -308,3 +308,10 @@
 (fact (located-in asia earth))
 (fact (located-in europe earth))
 (fact (transitive-relation located-in))
+
+;; --- L044: Capitals (applied 2026-10-18 03:32 UTC) ---
+;; A capital is a city and is located in its country.
+(fact (capital-of tokyo japan))
+(fact (capital-of paris france))
+(rule capital-located-rule (if (capital-of ?c ?n)) (then (located-in ?c ?n)))
+(rule capital-city-rule (if (capital-of ?c ?n)) (then (city ?c)))
