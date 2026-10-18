@@ -394,3 +394,14 @@
 (fact (security-mode armed))
 (rule unlocked-while-armed-rule (if (security-mode armed) (door-state ?d unlocked)) (then (alert ?d warning)))
 (rule suggest-lock-rule (if (security-mode armed) (door-state ?d unlocked)) (then (suggest lock ?d)))
+
+;; --- L055: Days of the week (applied 2026-10-18 08:34 UTC) ---
+;; Orders the days of the week; earlier-day is chained automatically by the generic transitivity rule.
+(fact (next-day mon tue))
+(fact (next-day tue wed))
+(fact (next-day wed thu))
+(fact (next-day thu fri))
+(fact (next-day fri sat))
+(fact (next-day sat sun))
+(fact (transitive-relation earlier-day))
+(rule earlier-day-base-rule (if (next-day ?a ?b)) (then (earlier-day ?a ?b)))
