@@ -386,3 +386,11 @@
 (fact (state lamp-3 on))
 (fact (occupancy kitchen empty))
 (rule energy-saving-rule (if (occupancy ?r empty) (device-in ?d ?r) (state ?d on)) (then (suggest turn-off ?d)))
+
+;; --- L054: Security (applied 2026-10-18 08:07 UTC) ---
+;; Demo door readings: when security is armed, an unlocked door raises a warning and a suggestion to lock it.
+(fact (door-state front-door locked))
+(fact (door-state back-door unlocked))
+(fact (security-mode armed))
+(rule unlocked-while-armed-rule (if (security-mode armed) (door-state ?d unlocked)) (then (alert ?d warning)))
+(rule suggest-lock-rule (if (security-mode armed) (door-state ?d unlocked)) (then (suggest lock ?d)))
