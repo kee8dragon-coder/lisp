@@ -338,3 +338,13 @@
 (fact (disjoint mammal amphibian))
 (fact (symmetric-relation disjoint))
 (rule conflict-rule (if (disjoint ?a ?b) (is-a ?x ?a) (is-a ?x ?b)) (then (conflict ?x ?a ?b)))
+
+;; --- L048: Courses (applied 2026-10-18 05:20 UTC) ---
+;; Teachers, enrolled students, who studies under whom, and who shares a class.
+(fact (teaches smith math))
+(fact (teaches jones physics))
+(fact (enrolled ana math))
+(fact (enrolled ben math))
+(fact (enrolled ben physics))
+(rule student-of-rule (if (enrolled ?s ?c) (teaches ?t ?c)) (then (student-of ?s ?t)))
+(rule classmates-rule (if (enrolled ?a ?c) (enrolled ?b ?c) (different ?a ?b)) (then (classmates ?a ?b)))
