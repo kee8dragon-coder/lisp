@@ -273,3 +273,13 @@
 ;; --- L039: Shared destinations (applied 2026-10-18 01:19 UTC) ---
 ;; Two different nodes that can both reach the same node.
 (rule common-target-rule (if (reachable ?a ?t) (reachable ?b ?t) (different ?a ?b)) (then (shares-target ?a ?b)))
+
+;; --- L040: Successor numbers (applied 2026-10-18 01:49 UTC) ---
+;; Counting from 1 to 6 using next facts; less-than is built from them and chained by the generic transitivity rule.
+(fact (next 1 2))
+(fact (next 2 3))
+(fact (next 3 4))
+(fact (next 4 5))
+(fact (next 5 6))
+(fact (transitive-relation less-than))
+(rule less-than-base-rule (if (next ?a ?b)) (then (less-than ?a ?b)))

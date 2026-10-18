@@ -2,9 +2,12 @@
 (:APPLIED
  ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009" "L010" "L011" "L012" "L013" "L014"
   "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024" "L025" "L026" "L027" "L028"
-  "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039")
- :FAILED NIL :RUNS 39 :LOG
- ((:TIME "2026-10-18 01:19 UTC" :STATUS :APPLIED :LESSON "L039" :TITLE "Shared destinations" :NOTE
+  "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040")
+ :FAILED NIL :RUNS 40 :LOG
+ ((:TIME "2026-10-18 01:49 UTC" :STATUS :APPLIED :LESSON "L040" :TITLE "Successor numbers" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 48 :GIVEN 124 :TOTAL 453))
+  (:TIME "2026-10-18 01:19 UTC" :STATUS :APPLIED :LESSON "L039" :TITLE "Shared destinations" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 47 :GIVEN 118 :TOTAL 432))
   (:TIME "2026-10-18 00:47 UTC" :STATUS :APPLIED :LESSON "L038" :TITLE "Graph reachability" :NOTE
@@ -91,7 +94,4 @@
    (:RULES 18 :GIVEN 23 :TOTAL 63))
   (:TIME "2026-10-17 14:46 UTC" :STATUS :APPLIED :LESSON "L011" :TITLE "Device lookups" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 16 :GIVEN 21 :TOTAL 57))
-  (:TIME "2026-10-17 14:20 UTC" :STATUS :APPLIED :LESSON "L010" :TITLE "Rooms and devices" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 14 :GIVEN 21 :TOTAL 51))))
+   (:RULES 16 :GIVEN 21 :TOTAL 57))))
