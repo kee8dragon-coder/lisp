@@ -4,9 +4,12 @@
   "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024" "L025" "L026" "L027" "L028"
   "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040" "L041" "L042"
   "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050" "L051" "L052" "L053" "L054" "L055" "L056"
-  "L057" "L058" "L059" "L060")
- :FAILED NIL :RUNS 60 :LOG
- ((:TIME "2026-10-18 10:35 UTC" :STATUS :APPLIED :LESSON "L060" :TITLE "Organisation chart" :NOTE
+  "L057" "L058" "L059" "L060" "L061")
+ :FAILED NIL :RUNS 61 :LOG
+ ((:TIME "2026-10-18 10:58 UTC" :STATUS :APPLIED :LESSON "L061" :TITLE "Transit network" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 73 :GIVEN 211 :TOTAL 720))
+  (:TIME "2026-10-18 10:35 UTC" :STATUS :APPLIED :LESSON "L060" :TITLE "Organisation chart" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 72 :GIVEN 205 :TOTAL 685))
   (:TIME "2026-10-18 10:09 UTC" :STATUS :APPLIED :LESSON "L059" :TITLE "Weather and plans" :NOTE
@@ -93,7 +96,4 @@
    (:RULES 42 :GIVEN 86 :TOTAL 318))
   (:TIME "2026-10-17 22:38 UTC" :STATUS :APPLIED :LESSON "L032" :TITLE "Second parents" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 41 :GIVEN 86 :TOTAL 312))
-  (:TIME "2026-10-17 22:13 UTC" :STATUS :APPLIED :LESSON "L031" :TITLE "Marriage and in-laws" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 41 :GIVEN 78 :TOTAL 250))))
+   (:RULES 41 :GIVEN 86 :TOTAL 312))))

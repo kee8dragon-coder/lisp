@@ -448,3 +448,13 @@
 (fact (inverse-relation manages reports-to))
 (rule manages-base-rule (if (manages-directly ?m ?a)) (then (manages ?m ?a)))
 (rule peers-rule (if (manages-directly ?m ?a) (manages-directly ?m ?b) (different ?a ?b)) (then (peers ?a ?b)))
+
+;; --- L061: Transit network (applied 2026-10-18 10:58 UTC) ---
+;; Stations joined by lines; the assistant works out which stations can be reached from which.
+(fact (connected central north))
+(fact (connected central east))
+(fact (connected east harbour))
+(fact (connected harbour airport))
+(fact (symmetric-relation connected))
+(fact (transitive-relation can-travel))
+(rule can-travel-base-rule (if (connected ?a ?b)) (then (can-travel ?a ?b)))
