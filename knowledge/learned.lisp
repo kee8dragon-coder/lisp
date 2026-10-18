@@ -249,3 +249,12 @@
 (fact (can bird lay-eggs))
 (fact (can mammal nurse-young))
 (rule can-inherit-rule (if (is-a ?x ?y) (can ?y ?a)) (then (can ?x ?a)))
+
+;; --- L037: Friendship (applied 2026-10-18 00:07 UTC) ---
+;; Friendship works both ways; a friend of a friend is a possible introduction.
+(fact (friend-of ana ben))
+(fact (friend-of ben cai))
+(fact (friend-of cai dee))
+(fact (friend-of eli fay))
+(fact (symmetric-relation friend-of))
+(rule friend-of-friend-rule (if (friend-of ?a ?b) (friend-of ?b ?c) (different ?a ?c)) (then (friend-of-friend ?a ?c)))
