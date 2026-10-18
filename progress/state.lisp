@@ -4,9 +4,12 @@
   "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024" "L025" "L026" "L027" "L028"
   "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040" "L041" "L042"
   "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050" "L051" "L052" "L053" "L054" "L055" "L056"
-  "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065")
- :FAILED NIL :RUNS 65 :LOG
- ((:TIME "2026-10-18 12:33 UTC" :STATUS :APPLIED :LESSON "L065" :TITLE "Kinds of number" :NOTE
+  "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066")
+ :FAILED NIL :RUNS 66 :LOG
+ ((:TIME "2026-10-18 13:07 UTC" :STATUS :APPLIED :LESSON "L066" :TITLE "Shapes" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 76 :GIVEN 246 :TOTAL 791))
+  (:TIME "2026-10-18 12:33 UTC" :STATUS :APPLIED :LESSON "L065" :TITLE "Kinds of number" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 76 :GIVEN 236 :TOTAL 766))
   (:TIME "2026-10-18 12:03 UTC" :STATUS :APPLIED :LESSON "L064" :TITLE "Solar system" :NOTE
@@ -93,7 +96,4 @@
    (:RULES 46 :GIVEN 118 :TOTAL 412))
   (:TIME "2026-10-18 00:07 UTC" :STATUS :APPLIED :LESSON "L037" :TITLE "Friendship" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 44 :GIVEN 112 :TOTAL 393))
-  (:TIME "2026-10-17 23:53 UTC" :STATUS :APPLIED :LESSON "L036" :TITLE "Abilities" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 43 :GIVEN 107 :TOTAL 380))))
+   (:RULES 44 :GIVEN 112 :TOTAL 393))))

@@ -498,3 +498,16 @@
 (fact (is-a integer rational))
 (fact (is-a rational real))
 (fact (is-a prime natural-number))
+
+;; --- L066: Shapes (applied 2026-10-18 13:07 UTC) ---
+;; A taxonomy of shapes with traits that pass down, so a square inherits what quadrilaterals and parallelograms have.
+(fact (is-a square rectangle))
+(fact (is-a square rhombus))
+(fact (is-a rectangle parallelogram))
+(fact (is-a rhombus parallelogram))
+(fact (is-a parallelogram quadrilateral))
+(fact (is-a quadrilateral polygon))
+(fact (is-a triangle polygon))
+(fact (has quadrilateral four-sides))
+(fact (has triangle three-sides))
+(fact (has parallelogram parallel-opposite-sides))
