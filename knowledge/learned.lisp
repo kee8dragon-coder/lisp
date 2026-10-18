@@ -321,3 +321,11 @@
 (fact (country japan))
 (fact (country france))
 (rule same-country-rule (if (located-in ?a ?c) (located-in ?b ?c) (country ?c) (different ?a ?b)) (then (same-country ?a ?b)))
+
+;; --- L046: Before and after (applied 2026-10-18 04:29 UTC) ---
+;; Ordering of events in a day; before chains together and has an after reverse.
+(fact (before breakfast lunch))
+(fact (before lunch dinner))
+(fact (before dinner sleep))
+(fact (transitive-relation before))
+(fact (inverse-relation before after))
