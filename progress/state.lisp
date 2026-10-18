@@ -6,8 +6,11 @@
   "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050" "L051" "L052" "L053" "L054" "L055" "L056"
   "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068" "L069"
   "L070")
- :FAILED NIL :RUNS 70 :LOG
- ((:TIME "2026-10-18 14:47 UTC" :STATUS :APPLIED :LESSON "L070" :TITLE "Habitats" :NOTE
+ :FAILED NIL :RUNS 71 :LOG
+ ((:TIME "2026-10-18 15:06 UTC" :STATUS :NOOP :LESSON NIL :TITLE NIL :NOTE
+   "Every lesson has been applied or skipped. Add lessons to *lessons* in symbolic-ai.lisp." :STATS
+   (:RULES 79 :GIVEN 264 :TOTAL 828))
+  (:TIME "2026-10-18 14:47 UTC" :STATUS :APPLIED :LESSON "L070" :TITLE "Habitats" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 79 :GIVEN 264 :TOTAL 828))
   (:TIME "2026-10-18 14:19 UTC" :STATUS :APPLIED :LESSON "L069" :TITLE "Food chain" :NOTE
@@ -94,7 +97,4 @@
    (:RULES 49 :GIVEN 139 :TOTAL 521))
   (:TIME "2026-10-18 02:40 UTC" :STATUS :APPLIED :LESSON "L042" :TITLE "Ranking people" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 49 :GIVEN 130 :TOTAL 503))
-  (:TIME "2026-10-18 02:11 UTC" :STATUS :APPLIED :LESSON "L041" :TITLE "Greater-than and between"
-   :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 49 :GIVEN 125 :TOTAL 489))))
+   (:RULES 49 :GIVEN 130 :TOTAL 503))))
