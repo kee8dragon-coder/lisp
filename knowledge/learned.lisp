@@ -511,3 +511,9 @@
 (fact (has quadrilateral four-sides))
 (fact (has triangle three-sides))
 (fact (has parallelogram parallel-opposite-sides))
+
+;; --- L067: Shape traits (applied 2026-10-18 13:33 UTC) ---
+;; More traits, plus a rule that triangles and quadrilaterals cannot overlap.
+(fact (has rectangle right-angles))
+(fact (has rhombus equal-sides))
+(fact (disjoint triangle quadrilateral))
