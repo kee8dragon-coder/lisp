@@ -288,3 +288,11 @@
 ;; The reverse of less-than, plus a between relation for three ordered numbers.
 (fact (inverse-relation less-than greater-than))
 (rule between-rule (if (less-than ?a ?b) (less-than ?b ?c)) (then (between ?b ?a ?c)))
+
+;; --- L042: Ranking people (applied 2026-10-18 02:40 UTC) ---
+;; Height ordering: taller-than chains together and has a shorter-than reverse.
+(fact (taller-than ana ben))
+(fact (taller-than ben cai))
+(fact (taller-than cai dee))
+(fact (transitive-relation taller-than))
+(fact (inverse-relation taller-than shorter-than))
