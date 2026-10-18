@@ -491,3 +491,10 @@
 (fact (orbits phobos mars))
 (fact (transitive-relation in-system-of))
 (rule in-system-base-rule (if (orbits ?a ?b)) (then (in-system-of ?a ?b)))
+
+;; --- L065: Kinds of number (applied 2026-10-18 12:33 UTC) ---
+;; Number kinds nested inside each other, using the same is-a chaining as the animals.
+(fact (is-a natural-number integer))
+(fact (is-a integer rational))
+(fact (is-a rational real))
+(fact (is-a prime natural-number))
