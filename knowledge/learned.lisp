@@ -416,3 +416,10 @@
 (rule overdue-rule (if (due ?t ?d) (today ?n) (earlier-day ?d ?n)) (then (overdue ?t)))
 (rule remind-rule (if (owns ?p ?t) (due ?t ?d)) (then (remind ?p ?t ?d)))
 (rule overdue-remind-rule (if (overdue ?t) (owns ?p ?t)) (then (remind-overdue ?p ?t)))
+
+;; --- L057: Priorities (applied 2026-10-18 09:24 UTC) ---
+;; Marks task priorities; an overdue high-priority task is urgent, and owners of high-priority tasks are told to focus on them.
+(fact (priority report high))
+(fact (priority taxes medium))
+(rule urgent-rule (if (overdue ?t) (priority ?t high)) (then (urgent ?t)))
+(rule focus-rule (if (priority ?t high) (owns ?p ?t)) (then (focus ?p ?t)))
