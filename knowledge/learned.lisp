@@ -524,3 +524,12 @@
 (fact (mix red yellow orange))
 (fact (mix blue yellow green))
 (rule mix-symmetric-rule (if (mix ?a ?b ?c)) (then (mix ?b ?a ?c)))
+
+;; --- L069: Food chain (applied 2026-10-18 14:19 UTC) ---
+;; Who eats whom; food-chain follows the whole chain from predator down to plants.
+(fact (eats hawk snake))
+(fact (eats snake frog))
+(fact (eats frog insect))
+(fact (eats insect plant))
+(fact (transitive-relation food-chain))
+(rule food-chain-base-rule (if (eats ?a ?b)) (then (food-chain ?a ?b)))

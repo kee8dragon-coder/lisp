@@ -4,9 +4,12 @@
   "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024" "L025" "L026" "L027" "L028"
   "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040" "L041" "L042"
   "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050" "L051" "L052" "L053" "L054" "L055" "L056"
-  "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068")
- :FAILED NIL :RUNS 68 :LOG
- ((:TIME "2026-10-18 13:58 UTC" :STATUS :APPLIED :LESSON "L068" :TITLE "Colour mixing" :NOTE
+  "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068" "L069")
+ :FAILED NIL :RUNS 69 :LOG
+ ((:TIME "2026-10-18 14:19 UTC" :STATUS :APPLIED :LESSON "L069" :TITLE "Food chain" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 78 :GIVEN 257 :TOTAL 818))
+  (:TIME "2026-10-18 13:58 UTC" :STATUS :APPLIED :LESSON "L068" :TITLE "Colour mixing" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 77 :GIVEN 252 :TOTAL 803))
   (:TIME "2026-10-18 13:33 UTC" :STATUS :APPLIED :LESSON "L067" :TITLE "Shape traits" :NOTE
@@ -93,7 +96,4 @@
    (:RULES 49 :GIVEN 125 :TOTAL 489))
   (:TIME "2026-10-18 01:49 UTC" :STATUS :APPLIED :LESSON "L040" :TITLE "Successor numbers" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 48 :GIVEN 124 :TOTAL 453))
-  (:TIME "2026-10-18 01:19 UTC" :STATUS :APPLIED :LESSON "L039" :TITLE "Shared destinations" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 47 :GIVEN 118 :TOTAL 432))))
+   (:RULES 48 :GIVEN 124 :TOTAL 453))))
