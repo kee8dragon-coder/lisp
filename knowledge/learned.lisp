@@ -430,3 +430,10 @@
 (fact (stock rice ok))
 (fact (stock coffee low))
 (rule restock-rule (if (stock ?i low)) (then (suggest buy ?i)))
+
+;; --- L059: Weather and plans (applied 2026-10-18 10:09 UTC) ---
+;; Demo forecast and plans; people with outdoor plans on a rainy day get an umbrella suggestion.
+(fact (forecast tomorrow rain))
+(fact (plans ana tomorrow outdoors))
+(fact (plans ben tomorrow indoors))
+(rule umbrella-rule (if (forecast ?d rain) (plans ?p ?d outdoors)) (then (suggest bring-umbrella ?p)))
