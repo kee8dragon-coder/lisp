@@ -283,3 +283,8 @@
 (fact (next 5 6))
 (fact (transitive-relation less-than))
 (rule less-than-base-rule (if (next ?a ?b)) (then (less-than ?a ?b)))
+
+;; --- L041: Greater-than and between (applied 2026-10-18 02:11 UTC) ---
+;; The reverse of less-than, plus a between relation for three ordered numbers.
+(fact (inverse-relation less-than greater-than))
+(rule between-rule (if (less-than ?a ?b) (less-than ?b ?c)) (then (between ?b ?a ?c)))

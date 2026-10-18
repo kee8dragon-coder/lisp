@@ -1,8 +1,8 @@
 # Latest automation run
 
-### 2026-10-18 01:49 UTC - Applied a lesson
+### 2026-10-18 02:11 UTC - Applied a lesson
 
-- Lesson: L040 - Successor numbers
+- Lesson: L041 - Greater-than and between
 - Result: Validated: the knowledge base loaded in SBCL and inference reached a fixpoint.
-- Knowledge now: 48 rules, 124 given facts, 453 facts after inference
+- Knowledge now: 49 rules, 125 given facts, 489 facts after inference
 

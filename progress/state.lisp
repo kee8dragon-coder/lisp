@@ -2,9 +2,12 @@
 (:APPLIED
  ("L001" "L002" "L003" "L004" "L005" "L006" "L007" "L008" "L009" "L010" "L011" "L012" "L013" "L014"
   "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024" "L025" "L026" "L027" "L028"
-  "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040")
- :FAILED NIL :RUNS 40 :LOG
- ((:TIME "2026-10-18 01:49 UTC" :STATUS :APPLIED :LESSON "L040" :TITLE "Successor numbers" :NOTE
+  "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040" "L041")
+ :FAILED NIL :RUNS 41 :LOG
+ ((:TIME "2026-10-18 02:11 UTC" :STATUS :APPLIED :LESSON "L041" :TITLE "Greater-than and between"
+   :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 49 :GIVEN 125 :TOTAL 489))
+  (:TIME "2026-10-18 01:49 UTC" :STATUS :APPLIED :LESSON "L040" :TITLE "Successor numbers" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 48 :GIVEN 124 :TOTAL 453))
   (:TIME "2026-10-18 01:19 UTC" :STATUS :APPLIED :LESSON "L039" :TITLE "Shared destinations" :NOTE
@@ -91,7 +94,4 @@
    (:RULES 20 :GIVEN 27 :TOTAL 71))
   (:TIME "2026-10-17 15:05 UTC" :STATUS :APPLIED :LESSON "L012" :TITLE "Presence and lights" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 18 :GIVEN 23 :TOTAL 63))
-  (:TIME "2026-10-17 14:46 UTC" :STATUS :APPLIED :LESSON "L011" :TITLE "Device lookups" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 16 :GIVEN 21 :TOTAL 57))))
+   (:RULES 18 :GIVEN 23 :TOTAL 63))))
