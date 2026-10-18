@@ -405,3 +405,14 @@
 (fact (next-day sat sun))
 (fact (transitive-relation earlier-day))
 (rule earlier-day-base-rule (if (next-day ?a ?b)) (then (earlier-day ?a ?b)))
+
+;; --- L056: Deadlines and reminders (applied 2026-10-18 09:00 UTC) ---
+;; Demo tasks with owners and due days; the assistant works out what is overdue and who to remind.
+(fact (today wed))
+(fact (due report mon))
+(fact (due taxes fri))
+(fact (owns ana report))
+(fact (owns ben taxes))
+(rule overdue-rule (if (due ?t ?d) (today ?n) (earlier-day ?d ?n)) (then (overdue ?t)))
+(rule remind-rule (if (owns ?p ?t) (due ?t ?d)) (then (remind ?p ?t ?d)))
+(rule overdue-remind-rule (if (overdue ?t) (owns ?p ?t)) (then (remind-overdue ?p ?t)))
