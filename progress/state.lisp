@@ -4,9 +4,13 @@
   "L015" "L016" "L017" "L018" "L019" "L020" "L021" "L022" "L023" "L024" "L025" "L026" "L027" "L028"
   "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040" "L041" "L042"
   "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050" "L051" "L052" "L053" "L054" "L055" "L056"
-  "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068" "L069")
- :FAILED NIL :RUNS 69 :LOG
- ((:TIME "2026-10-18 14:19 UTC" :STATUS :APPLIED :LESSON "L069" :TITLE "Food chain" :NOTE
+  "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068" "L069"
+  "L070")
+ :FAILED NIL :RUNS 70 :LOG
+ ((:TIME "2026-10-18 14:47 UTC" :STATUS :APPLIED :LESSON "L070" :TITLE "Habitats" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 79 :GIVEN 264 :TOTAL 828))
+  (:TIME "2026-10-18 14:19 UTC" :STATUS :APPLIED :LESSON "L069" :TITLE "Food chain" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 78 :GIVEN 257 :TOTAL 818))
   (:TIME "2026-10-18 13:58 UTC" :STATUS :APPLIED :LESSON "L068" :TITLE "Colour mixing" :NOTE
@@ -93,7 +97,4 @@
    (:RULES 49 :GIVEN 130 :TOTAL 503))
   (:TIME "2026-10-18 02:11 UTC" :STATUS :APPLIED :LESSON "L041" :TITLE "Greater-than and between"
    :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 49 :GIVEN 125 :TOTAL 489))
-  (:TIME "2026-10-18 01:49 UTC" :STATUS :APPLIED :LESSON "L040" :TITLE "Successor numbers" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 48 :GIVEN 124 :TOTAL 453))))
+   (:RULES 49 :GIVEN 125 :TOTAL 489))))

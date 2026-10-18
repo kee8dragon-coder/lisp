@@ -533,3 +533,14 @@
 (fact (eats insect plant))
 (fact (transitive-relation food-chain))
 (rule food-chain-base-rule (if (eats ?a ?b)) (then (food-chain ?a ?b)))
+
+;; --- L070: Habitats (applied 2026-10-18 14:47 UTC) ---
+;; Where animals live; an animal living in a water habitat is aquatic.
+(fact (lives-in frog pond))
+(fact (lives-in salmon river))
+(fact (lives-in shark ocean))
+(fact (lives-in eagle mountain))
+(fact (water-habitat pond))
+(fact (water-habitat river))
+(fact (water-habitat ocean))
+(rule aquatic-rule (if (lives-in ?a ?h) (water-habitat ?h)) (then (aquatic ?a)))
