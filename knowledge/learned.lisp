@@ -628,3 +628,12 @@
 (rule reported-rule (if (status ?c ?s)) (then (status-reported ?c)))
 (rule unreported-rule (if (component ?c) (not (status-reported ?c))) (then (unreported ?c)))
 (rule unreported-alert-rule (if (unreported ?c)) (then (alert ?c no-status)))
+
+;; --- L081: Open tasks (applied 2026-10-23 15:16 UTC) ---
+;; Lists the tasks and uses negation: a task that is not marked done is open.
+(fact (task compile))
+(fact (task build))
+(fact (task test))
+(fact (task deploy))
+(fact (task bundle))
+(rule open-task-rule (if (task ?t) (not (done ?t))) (then (open-task ?t)))
