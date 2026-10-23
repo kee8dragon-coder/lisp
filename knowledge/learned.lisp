@@ -551,3 +551,7 @@
 (fact (room study))
 (fact (room kitchen))
 (rule empty-room-rule (if (room ?r) (not (occupied ?r))) (then (empty-room ?r)))
+
+;; --- L072: Wasted energy (applied 2026-10-23 08:00 UTC) ---
+;; Anything switched on in an empty room becomes a suggestion to switch it off, worked out from who is where.
+(rule wasted-energy-rule (if (empty-room ?r) (device-in ?d ?r) (state ?d on)) (then (suggest turn-off ?d)))
