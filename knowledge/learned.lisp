@@ -637,3 +637,8 @@
 (fact (task deploy))
 (fact (task bundle))
 (rule open-task-rule (if (task ?t) (not (done ?t))) (then (open-task ?t)))
+
+;; --- L082: Ready tasks (applied 2026-10-23 15:54 UTC) ---
+;; A task is blocked if anything it depends on is not done; an open task that is not blocked is ready to start.
+(rule blocked-rule (if (depends-on ?t ?p) (not (done ?p))) (then (blocked ?t)))
+(rule ready-rule (if (open-task ?t) (not (blocked ?t))) (then (ready ?t)))

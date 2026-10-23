@@ -5,9 +5,12 @@
   "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040" "L041" "L042"
   "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050" "L051" "L052" "L053" "L054" "L055" "L056"
   "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068" "L069" "L070"
-  "L071" "L072" "L073" "L074" "L075" "L076" "L077" "L078" "L079" "L080" "L081")
- :FAILED NIL :RUNS 82 :LOG
- ((:TIME "2026-10-23 15:16 UTC" :STATUS :APPLIED :LESSON "L081" :TITLE "Open tasks" :NOTE
+  "L071" "L072" "L073" "L074" "L075" "L076" "L077" "L078" "L079" "L080" "L081" "L082")
+ :FAILED NIL :RUNS 83 :LOG
+ ((:TIME "2026-10-23 15:54 UTC" :STATUS :APPLIED :LESSON "L082" :TITLE "Ready tasks" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 101 :GIVEN 304 :TOTAL 909))
+  (:TIME "2026-10-23 15:16 UTC" :STATUS :APPLIED :LESSON "L081" :TITLE "Open tasks" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 99 :GIVEN 304 :TOTAL 905))
   (:TIME "2026-10-23 14:41 UTC" :STATUS :APPLIED :LESSON "L080" :TITLE "Unreported components"
@@ -93,7 +96,4 @@
    (:RULES 63 :GIVEN 186 :TOTAL 639))
   (:TIME "2026-10-18 08:07 UTC" :STATUS :APPLIED :LESSON "L054" :TITLE "Security" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 62 :GIVEN 179 :TOTAL 611))
-  (:TIME "2026-10-18 07:46 UTC" :STATUS :APPLIED :LESSON "L053" :TITLE "Energy saving" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 60 :GIVEN 176 :TOTAL 606))))
+   (:RULES 62 :GIVEN 179 :TOTAL 611))))
