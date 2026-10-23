@@ -660,3 +660,13 @@
 ;; --- L085: Squares (applied 2026-10-23 17:57 UTC) ---
 ;; Squares of the counted numbers, using multiplication.
 (rule square-rule (if (tick ?n) (mul ?n ?n ?sq)) (then (square ?n ?sq)))
+
+;; --- L086: Planets and moons (applied 2026-10-23 18:23 UTC) ---
+;; Planets and moons as kinds, with a trait that moons inherit.
+(fact (is-a mercury planet))
+(fact (is-a venus planet))
+(fact (is-a earth planet))
+(fact (is-a mars planet))
+(fact (is-a moon satellite))
+(fact (is-a phobos satellite))
+(fact (has satellite orbit-around-planet))
