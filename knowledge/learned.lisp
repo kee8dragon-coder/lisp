@@ -544,3 +544,10 @@
 (fact (water-habitat river))
 (fact (water-habitat ocean))
 (rule aquatic-rule (if (lives-in ?a ?h) (water-habitat ?h)) (then (aquatic ?a)))
+
+;; --- L071: Empty rooms (applied 2026-10-23 07:21 UTC) ---
+;; Lists the rooms and uses negation: a room nobody is in is empty.
+(fact (room lounge))
+(fact (room study))
+(fact (room kitchen))
+(rule empty-room-rule (if (room ?r) (not (occupied ?r))) (then (empty-room ?r)))
