@@ -5,9 +5,12 @@
   "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040" "L041" "L042"
   "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050" "L051" "L052" "L053" "L054" "L055" "L056"
   "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068" "L069" "L070"
-  "L071" "L072" "L073" "L074" "L075" "L076" "L077" "L078" "L079")
- :FAILED NIL :RUNS 80 :LOG
- ((:TIME "2026-10-23 12:47 UTC" :STATUS :APPLIED :LESSON "L079" :TITLE "Budget" :NOTE
+  "L071" "L072" "L073" "L074" "L075" "L076" "L077" "L078" "L079" "L080")
+ :FAILED NIL :RUNS 81 :LOG
+ ((:TIME "2026-10-23 14:41 UTC" :STATUS :APPLIED :LESSON "L080" :TITLE "Unreported components"
+   :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 98 :GIVEN 299 :TOTAL 896))
+  (:TIME "2026-10-23 12:47 UTC" :STATUS :APPLIED :LESSON "L079" :TITLE "Budget" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 95 :GIVEN 294 :TOTAL 885))
   (:TIME "2026-10-23 11:43 UTC" :STATUS :APPLIED :LESSON "L078" :TITLE "Countdowns" :NOTE
@@ -93,7 +96,4 @@
    (:RULES 60 :GIVEN 176 :TOTAL 606))
   (:TIME "2026-10-18 07:17 UTC" :STATUS :APPLIED :LESSON "L052" :TITLE "Device state" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 59 :GIVEN 172 :TOTAL 594))
-  (:TIME "2026-10-18 06:41 UTC" :STATUS :APPLIED :LESSON "L051" :TITLE "Device capabilities" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 57 :GIVEN 169 :TOTAL 590))))
+   (:RULES 59 :GIVEN 172 :TOTAL 594))))

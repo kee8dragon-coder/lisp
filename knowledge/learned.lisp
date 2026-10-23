@@ -617,3 +617,14 @@
 (rule remaining-rule (if (spent ?c ?s) (budget ?c ?b) (sub ?b ?s ?left)) (then (remaining ?c ?left)))
 (rule over-budget-rule (if (remaining ?c ?left) (lt ?left 0)) (then (over-budget ?c)))
 (rule budget-alert-rule (if (over-budget ?c)) (then (alert ?c over-budget)))
+
+;; --- L080: Unreported components (applied 2026-10-23 14:41 UTC) ---
+;; Uses negation to notice components that have no status report at all, and raises an alert for each.
+(fact (component power))
+(fact (component cooling))
+(fact (component compute))
+(fact (component network))
+(fact (component assistant))
+(rule reported-rule (if (status ?c ?s)) (then (status-reported ?c)))
+(rule unreported-rule (if (component ?c) (not (status-reported ?c))) (then (unreported ?c)))
+(rule unreported-alert-rule (if (unreported ?c)) (then (alert ?c no-status)))
