@@ -681,3 +681,11 @@
 (fact (next-note a b))
 (fact (transitive-relation lower-note))
 (rule lower-note-base-rule (if (next-note ?x ?y)) (then (lower-note ?x ?y)))
+
+;; --- L088: Length units (applied 2026-10-23 20:01 UTC) ---
+;; Units from small to large; chaining and the reverse relation tell the assistant which unit is bigger.
+(fact (smaller-unit millimeter centimeter))
+(fact (smaller-unit centimeter meter))
+(fact (smaller-unit meter kilometer))
+(fact (transitive-relation smaller-unit))
+(fact (inverse-relation smaller-unit bigger-unit))

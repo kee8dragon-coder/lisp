@@ -6,9 +6,12 @@
   "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050" "L051" "L052" "L053" "L054" "L055" "L056"
   "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068" "L069" "L070"
   "L071" "L072" "L073" "L074" "L075" "L076" "L077" "L078" "L079" "L080" "L081" "L082" "L083" "L084"
-  "L085" "L086" "L087")
- :FAILED NIL :RUNS 88 :LOG
- ((:TIME "2026-10-23 19:34 UTC" :STATUS :APPLIED :LESSON "L087" :TITLE "Musical notes" :NOTE
+  "L085" "L086" "L087" "L088")
+ :FAILED NIL :RUNS 89 :LOG
+ ((:TIME "2026-10-23 20:01 UTC" :STATUS :APPLIED :LESSON "L088" :TITLE "Length units" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 106 :GIVEN 328 :TOTAL 980))
+  (:TIME "2026-10-23 19:34 UTC" :STATUS :APPLIED :LESSON "L087" :TITLE "Musical notes" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 106 :GIVEN 323 :TOTAL 966))
   (:TIME "2026-10-23 18:23 UTC" :STATUS :APPLIED :LESSON "L086" :TITLE "Planets and moons" :NOTE
@@ -94,7 +97,4 @@
    (:RULES 73 :GIVEN 211 :TOTAL 720))
   (:TIME "2026-10-18 10:35 UTC" :STATUS :APPLIED :LESSON "L060" :TITLE "Organisation chart" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 72 :GIVEN 205 :TOTAL 685))
-  (:TIME "2026-10-18 10:09 UTC" :STATUS :APPLIED :LESSON "L059" :TITLE "Weather and plans" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 70 :GIVEN 199 :TOTAL 661))))
+   (:RULES 72 :GIVEN 205 :TOTAL 685))))
