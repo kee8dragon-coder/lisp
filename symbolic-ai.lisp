@@ -4,14 +4,27 @@
 ;;;;   sbcl --noinform --non-interactive --load symbolic-ai.lisp                 demo
 ;;;;   SAI_MODE=validate sbcl --noinform --non-interactive --load symbolic-ai.lisp
 ;;;;   SAI_MODE=evolve   sbcl --noinform --non-interactive --load symbolic-ai.lisp
+;;;;   SAI_MODE=facts    ...            print every fact after inference
+;;;;                                    (SAI_PREDICATES=suggest,alert limits it)
+;;;;   SAI_MODE=load     ...            just load, e.g. to explore in a REPL
 ;;;;   (record-failure is used only by the workflow)
 ;;;;
 ;;;; MODEL
 ;;;;   Fact     a list like (parent alice bob). No variables, no strings.
 ;;;;   Variable a symbol starting with ?, like ?x.
 ;;;;   Rule     (rule name (if cond1 cond2 ...) (then conclusion))
-;;;;   Built-in (different ?a ?b), holds when both are bound and unequal.
-;;;;            Put it last in a rule, after the variables are bound.
+;;;;   Built-ins, used as rule conditions. Their variables must already be bound
+;;;;   by an earlier condition, so put them after the conditions that bind them:
+;;;;     (different ?a ?b)       holds when the two values differ
+;;;;     (lt|gt|le|ge ?a ?b)     integer comparison
+;;;;     (add|sub|mul ?a ?b ?c)  integer arithmetic; ?c is bound to the result
+;;;;     (not (pattern ...))     holds when no such fact is known (negation as
+;;;;                             failure). Rules using NOT run in a second phase,
+;;;;                             after all other rules have settled; if a later
+;;;;                             fact contradicts a NOT assumption, inference
+;;;;                             reports :negation-conflict instead of hiding it.
+;;;;   Retraction: (retract-fact kb fact) removes a given fact and everything
+;;;;   that depended on it, and returns the facts that disappeared.
 ;;;;
 ;;;; AUTOMATION (see .github/workflows/autoevolve.yml)
 ;;;;   Each run applies ONE lesson from *LESSONS* below (at most 10 plain facts or
@@ -28,8 +41,9 @@
 ;;;;   assistant skills arrive early (L010 onward).
 ;;;;
 ;;;; ROADMAP (small steps, tests and Python/neural parts deferred by choice)
-;;;;   1 Engine: index facts by predicate; numeric built-ins; negation as failure
-;;;;     (stratified); retraction with dependent facts.
+;;;;   1 Engine (DONE): fact index by predicate; integer built-ins; negation as
+;;;;     failure (two phases plus a conflict check, not full stratification);
+;;;;     retraction with dependent facts.
 ;;;;   2 Explanations: "why not?" (which condition failed); proof trees as data;
 ;;;;     plain-English templates; contradiction detection.
 ;;;;   3 Queries: conjunctive queries; backward chaining with unification; a REPL.
@@ -71,7 +85,8 @@
 (defstruct kb
   (facts '())                                  ; insertion order
   (rules '())
-  (why (make-hash-table :test 'equal)))        ; fact -> (:given) or (:derived rule supports)
+  (why (make-hash-table :test 'equal))         ; fact -> (:given) or (:derived rule supports)
+  (index (make-hash-table :test 'eql)))        ; predicate symbol -> its facts, insertion order
 
 (defun variable-p (x)
   (and (symbolp x)
@@ -88,13 +103,25 @@
         ((consp form) (union (variables-in (car form)) (variables-in (cdr form))))
         (t '())))
 
-(defun builtin-condition-p (condition)
-  (and (consp condition) (eq (first condition) 'different)))
+;;; Built-in conditions and how many parts each has, including its name.
+(defparameter *builtin-arity*
+  '((different . 3) (lt . 3) (gt . 3) (le . 3) (ge . 3)
+    (add . 4) (sub . 4) (mul . 4) (not . 2)))
 
-(defun builtin-holds-p (condition)
-  (destructuring-bind (op a b) condition
-    (declare (ignore op))
-    (and (ground-p a) (ground-p b) (not (equal a b)))))
+(defun builtin-condition-p (condition)
+  (and (consp condition)
+       (symbolp (first condition))
+       (assoc (first condition) *builtin-arity*)
+       t))
+
+(defun condition-ok-p (condition)
+  "A condition is a list; built-ins must have the right number of parts."
+  (and (consp condition)
+       (or (not (builtin-condition-p condition))
+           (and (= (length condition)
+                   (cdr (assoc (first condition) *builtin-arity*)))
+                (or (not (eq (first condition) 'not))
+                    (consp (second condition)))))))
 
 (defun match-variable (var datum bindings)
   (let ((binding (assoc var bindings)))
@@ -128,21 +155,42 @@
   "Returns T if FACT was new."
   (unless (and (consp fact) (ground-p fact))
     (error "A fact must be a list without variables: ~a" (show fact)))
+  (when (eq (first fact) 'not)
+    (error "A fact cannot start with NOT: ~a" (show fact)))
   (cond ((known-p kb fact) nil)
         (t (setf (kb-facts kb) (append (kb-facts kb) (list fact))
                  (gethash fact (kb-why kb)) justification)
+           (when (symbolp (first fact))
+             (setf (gethash (first fact) (kb-index kb))
+                   (append (gethash (first fact) (kb-index kb)) (list fact))))
            t)))
+
+(defun check-rule-bindings (rule)
+  "Signal an error if a built-in uses a variable no earlier condition binds, or
+if the conclusion uses a variable nothing binds."
+  (let ((bound '()))
+    (dolist (condition (rule-conditions rule))
+      (if (builtin-condition-p condition)
+          (let* ((arithmetic (member (first condition) '(add sub mul)))
+                 (inputs (if arithmetic
+                             (list (second condition) (third condition))
+                             (rest condition)))
+                 (outputs (if arithmetic (list (fourth condition)) '()))
+                 (missing (set-difference (variables-in inputs) bound)))
+            (when missing
+              (error "Rule ~a: ~a uses variables no earlier condition binds: ~a"
+                     (rule-name rule) (show condition) (show missing)))
+            (setf bound (union bound (variables-in outputs))))
+          (setf bound (union bound (variables-in condition)))))
+    (let ((unbound (set-difference (variables-in (rule-conclusion rule)) bound)))
+      (when unbound
+        (error "Rule ~a: conclusion uses variables its conditions never bind: ~a"
+               (rule-name rule) (show unbound))))))
 
 (defun add-rule (kb rule)
   (when (find (rule-name rule) (kb-rules kb) :key #'rule-name)
     (error "Duplicate rule name: ~a" (rule-name rule)))
-  (let ((unbound (set-difference
-                  (variables-in (rule-conclusion rule))
-                  (variables-in (remove-if #'builtin-condition-p
-                                           (rule-conditions rule))))))
-    (when unbound
-      (error "Rule ~a: conclusion uses variables its conditions never bind: ~a"
-             (rule-name rule) (show unbound))))
+  (check-rule-bindings rule)
   (setf (kb-rules kb) (append (kb-rules kb) (list rule)))
   rule)
 
@@ -151,10 +199,7 @@
     (unless (and (eq tag 'rule)
                  (symbolp name)
                  (consp if-clause) (eq (first if-clause) 'if) (rest if-clause)
-                 (every (lambda (c)
-                          (and (consp c)
-                               (or (not (builtin-condition-p c)) (= (length c) 3))))
-                        (rest if-clause))
+                 (every #'condition-ok-p (rest if-clause))
                  (consp then-clause) (eq (first then-clause) 'then)
                  (= (length then-clause) 2))
       (error "Malformed rule: ~a" (show form)))
@@ -184,42 +229,126 @@
 (defparameter *max-rounds* 50)
 (defparameter *max-facts* 5000)
 
+(defun candidate-facts (kb pattern)
+  "Facts that could match PATTERN: those of its predicate when that is a plain
+symbol, otherwise every fact."
+  (if (and (consp pattern)
+           (symbolp (first pattern))
+           (not (variable-p (first pattern))))
+      (gethash (first pattern) (kb-index kb))
+      (kb-facts kb)))
+
+(defun eval-builtin (kb pattern bindings support)
+  "Evaluate a built-in condition (variables already substituted).
+Returns (values ok bindings support)."
+  (let ((op (first pattern)))
+    (case op
+      (different
+       (destructuring-bind (a b) (rest pattern)
+         (values (and (ground-p a) (ground-p b) (not (equal a b)))
+                 bindings support)))
+      ((lt gt le ge)
+       (destructuring-bind (a b) (rest pattern)
+         (values (and (integerp a) (integerp b)
+                      (ecase op
+                        (lt (< a b))
+                        (gt (> a b))
+                        (le (<= a b))
+                        (ge (>= a b))))
+                 bindings support)))
+      ((add sub mul)
+       (destructuring-bind (a b c) (rest pattern)
+         (if (and (integerp a) (integerp b))
+             (let* ((value (ecase op
+                             (add (+ a b))
+                             (sub (- a b))
+                             (mul (* a b))))
+                    (new (match c value bindings)))
+               (if (eq new :fail)
+                   (values nil bindings support)
+                   (values t new support)))
+             (values nil bindings support))))
+      (not
+       (let ((inner (second pattern)))
+         (if (and (consp inner) (ground-p inner) (not (known-p kb inner)))
+             (values t bindings (cons pattern support))
+             (values nil bindings support))))
+      (t (values nil bindings support)))))
+
 (defun satisfy (kb conditions bindings support)
   "All ways to satisfy CONDITIONS: a list of (bindings . supporting-facts)."
   (if (null conditions)
       (list (cons bindings (reverse support)))
       (let ((pattern (substitute-bindings (first conditions) bindings)))
         (if (builtin-condition-p pattern)
-            (if (builtin-holds-p pattern)
-                (satisfy kb (rest conditions) bindings support)
-                '())
+            (multiple-value-bind (ok new-bindings new-support)
+                (eval-builtin kb pattern bindings support)
+              (if ok
+                  (satisfy kb (rest conditions) new-bindings new-support)
+                  '()))
             (let ((results '()))
-              (dolist (fact (kb-facts kb))
+              (dolist (fact (candidate-facts kb pattern))
                 (let ((b (match pattern fact bindings)))
                   (unless (eq b :fail)
                     (dolist (r (satisfy kb (rest conditions) b (cons fact support)))
                       (push r results)))))
               (nreverse results))))))
 
-(defun forward-chain (kb &key (max-rounds *max-rounds*) (max-facts *max-facts*))
-  "Apply rules until nothing new appears or a limit is hit.
+(defun run-rules (kb rules max-rounds max-facts)
+  "Apply RULES until nothing new appears or a limit is hit.
 Returns (values new-facts reason): :fixpoint, :round-limit or :fact-limit."
   (let ((derived '()))
     (dotimes (round max-rounds)
       (declare (ignorable round))
       (let ((changed nil))
-        (dolist (rule (kb-rules kb))
+        (dolist (rule rules)
           (dolist (found (satisfy kb (rule-conditions rule) '() '()))
             (let ((fact (substitute-bindings (rule-conclusion rule) (car found))))
               (when (add-fact kb fact (list :derived (rule-name rule) (cdr found)))
                 (push fact derived)
                 (setf changed t)
                 (when (>= (length (kb-facts kb)) max-facts)
-                  (return-from forward-chain
+                  (return-from run-rules
                     (values (nreverse derived) :fact-limit)))))))
         (unless changed
-          (return-from forward-chain (values (nreverse derived) :fixpoint)))))
+          (return-from run-rules (values (nreverse derived) :fixpoint)))))
     (values (nreverse derived) :round-limit)))
+
+(defun rule-uses-negation-p (rule)
+  (some (lambda (condition)
+          (and (consp condition) (eq (first condition) 'not)))
+        (rule-conditions rule)))
+
+(defun negation-conflicts (kb)
+  "Derived facts that relied on a NOT whose fact has since become known."
+  (let ((bad '()))
+    (maphash (lambda (fact why)
+               (when (eq (first why) :derived)
+                 (dolist (support (third why))
+                   (when (and (consp support)
+                              (eq (first support) 'not)
+                              (known-p kb (second support)))
+                     (push fact bad)))))
+             (kb-why kb))
+    bad))
+
+(defun forward-chain (kb &key (max-rounds *max-rounds*) (max-facts *max-facts*))
+  "Apply rules until nothing new appears or a limit is hit. Rules that use NOT
+run in a second phase, after all the other rules have settled.
+Returns (values new-facts reason): :fixpoint, :round-limit, :fact-limit or
+:negation-conflict (a NOT assumption was contradicted by a later fact)."
+  (let ((negating (remove-if-not #'rule-uses-negation-p (kb-rules kb))))
+    (multiple-value-bind (derived reason)
+        (run-rules kb (remove-if #'rule-uses-negation-p (kb-rules kb))
+                   max-rounds max-facts)
+      (if (or (null negating) (not (eq reason :fixpoint)))
+          (values derived reason)
+          (multiple-value-bind (more more-reason)
+              (run-rules kb (kb-rules kb) max-rounds max-facts)
+            (values (append derived more)
+                    (if (and (eq more-reason :fixpoint) (negation-conflicts kb))
+                        :negation-conflict
+                        more-reason)))))))
 
 (defun query (kb pattern)
   "A list of binding alists, one per known fact matching PATTERN."
@@ -233,7 +362,10 @@ Returns (values new-facts reason): :fixpoint, :round-limit or :fact-limit."
   "Print whether FACT is given, or which rule and facts derived it."
   (let ((why (gethash fact (kb-why kb)))
         (pad (make-string (* 2 depth) :initial-element #\Space)))
-    (cond ((null why)
+    (cond ((and (consp fact) (eq (first fact) 'not))
+           (format stream "~a~a -- no such fact is known (negation as failure)~%"
+                   pad (show fact)))
+          ((null why)
            (format stream "~a~a -- not known~%" pad (show fact)))
           ((eq (first why) :given)
            (format stream "~a~a -- given~%" pad (show fact)))
@@ -242,6 +374,32 @@ Returns (values new-facts reason): :fixpoint, :round-limit or :fact-limit."
                    pad (show fact) (second why))
            (dolist (support (third why))
              (explain kb support :stream stream :depth (1+ depth)))))))
+
+;;; Retraction ("what if this stopped being true?")
+
+(defun given-facts (kb)
+  (remove-if-not (lambda (fact)
+                   (eq (first (gethash fact (kb-why kb))) :given))
+                 (kb-facts kb)))
+
+(defun clear-kb-facts (kb)
+  (setf (kb-facts kb) '())
+  (clrhash (kb-why kb))
+  (clrhash (kb-index kb)))
+
+(defun retract-fact (kb fact)
+  "Remove the given FACT and every derived fact that depended on it by
+rebuilding the derived facts from the remaining given facts.
+Returns the facts that disappeared, or NIL if FACT is not a given fact."
+  (let ((why (gethash fact (kb-why kb))))
+    (when (and why (eq (first why) :given))
+      (let ((before (kb-facts kb))
+            (keep (remove fact (given-facts kb) :test #'equal)))
+        (clear-kb-facts kb)
+        (dolist (kept keep)
+          (add-fact kb kept))
+        (forward-chain kb)
+        (remove-if (lambda (old) (known-p kb old)) before)))))
 
 ;;; ======================================================================
 ;;; Starting knowledge (hand-written; the automation never edits this)
@@ -995,7 +1153,222 @@ Returns (values new-facts reason): :fixpoint, :round-limit or :fact-limit."
              (fact (water-habitat ocean))
              (rule aquatic-rule
                (if (lives-in ?a ?h) (water-habitat ?h))
-               (then (aquatic ?a)))))))
+               (then (aquatic ?a)))))
+
+    ;; ---- Lessons that use the Phase 1 engine: not, comparisons, arithmetic ----
+
+    (:id "L071" :title "Empty rooms"
+     :why "Lists the rooms and uses negation: a room nobody is in is empty."
+     :forms ((fact (room lounge))
+             (fact (room study))
+             (fact (room kitchen))
+             (rule empty-room-rule
+               (if (room ?r) (not (occupied ?r)))
+               (then (empty-room ?r)))))
+
+    (:id "L072" :title "Wasted energy"
+     :why "Anything switched on in an empty room becomes a suggestion to switch it off, worked out from who is where."
+     :forms ((rule wasted-energy-rule
+               (if (empty-room ?r) (device-in ?d ?r) (state ?d on))
+               (then (suggest turn-off ?d)))))
+
+    (:id "L073" :title "Unattended appliances"
+     :why "Adds an oven left on in the kitchen; an appliance that is on in an empty room raises a warning."
+     :forms ((fact (device-in oven kitchen))
+             (fact (device-type oven appliance))
+             (fact (state oven on))
+             (rule unattended-appliance-rule
+               (if (device-type ?d appliance) (state ?d on) (device-in ?d ?r) (not (occupied ?r)))
+               (then (alert ?d unattended)))))
+
+    (:id "L074" :title "Event times"
+     :why "Start hours and lengths for the Monday events; arithmetic works out when each one ends."
+     :forms ((fact (starts standup 9))
+             (fact (lasts standup 1))
+             (fact (starts review 9))
+             (fact (lasts review 2))
+             (fact (starts lunch 12))
+             (fact (lasts lunch 1))
+             (rule ends-rule
+               (if (starts ?e ?s) (lasts ?e ?d) (add ?s ?d ?end))
+               (then (ends ?e ?end)))))
+
+    (:id "L075" :title "Overlapping events"
+     :why "Two different events overlap when each one starts before the other ends."
+     :forms ((rule overlap-rule
+               (if (starts ?a ?s1) (ends ?a ?e1) (starts ?b ?s2) (ends ?b ?e2) (different ?a ?b) (lt ?s1 ?e2) (lt ?s2 ?e1))
+               (then (overlaps ?a ?b)))))
+
+    (:id "L076" :title "Battery levels"
+     :why "Demo battery readings; a device below the low-battery threshold gets an alert and a charging suggestion."
+     :forms ((fact (battery phone 15))
+             (fact (battery tablet 80))
+             (fact (battery watch 8))
+             (fact (threshold low-battery 20))
+             (rule low-battery-rule
+               (if (battery ?d ?level) (threshold low-battery ?t) (lt ?level ?t))
+               (then (alert ?d low-battery)))
+             (rule suggest-charge-rule
+               (if (alert ?d low-battery))
+               (then (suggest charge ?d)))))
+
+    (:id "L077" :title "Thermostat"
+     :why "Demo room temperatures against a comfort range; an occupied room that is too cold raises an alert."
+     :forms ((fact (temperature lounge 17))
+             (fact (temperature study 22))
+             (fact (comfort lowest 19))
+             (fact (comfort highest 24))
+             (rule too-cold-rule
+               (if (temperature ?r ?t) (comfort lowest ?m) (lt ?t ?m))
+               (then (too-cold ?r)))
+             (rule too-warm-rule
+               (if (temperature ?r ?t) (comfort highest ?m) (gt ?t ?m))
+               (then (too-warm ?r)))
+             (rule cold-alert-rule
+               (if (too-cold ?r) (occupied ?r))
+               (then (alert ?r too-cold)))))
+
+    (:id "L078" :title "Countdowns"
+     :why "Demo due dates as day numbers; subtraction gives the days left, and the assistant flags what is due soon or already past due."
+     :forms ((fact (current-date 15))
+             (fact (due-date taxes 20))
+             (fact (due-date passport 40))
+             (fact (due-date rent 10))
+             (rule days-left-rule
+               (if (due-date ?t ?d) (current-date ?n) (sub ?d ?n ?left))
+               (then (days-left ?t ?left)))
+             (rule due-soon-rule
+               (if (days-left ?t ?x) (ge ?x 0) (lt ?x 8))
+               (then (due-soon ?t)))
+             (rule past-due-rule
+               (if (days-left ?t ?x) (lt ?x 0))
+               (then (past-due ?t)))))
+
+    (:id "L079" :title "Budget"
+     :why "A demo budget; subtraction gives what is left in each category and anything below zero is over budget."
+     :forms ((fact (spent food 120))
+             (fact (spent transport 45))
+             (fact (spent fun 80))
+             (fact (budget food 150))
+             (fact (budget transport 60))
+             (fact (budget fun 60))
+             (rule remaining-rule
+               (if (spent ?c ?s) (budget ?c ?b) (sub ?b ?s ?left))
+               (then (remaining ?c ?left)))
+             (rule over-budget-rule
+               (if (remaining ?c ?left) (lt ?left 0))
+               (then (over-budget ?c)))
+             (rule budget-alert-rule
+               (if (over-budget ?c))
+               (then (alert ?c over-budget)))))
+
+    (:id "L080" :title "Unreported components"
+     :why "Uses negation to notice components that have no status report at all, and raises an alert for each."
+     :forms ((fact (component power))
+             (fact (component cooling))
+             (fact (component compute))
+             (fact (component network))
+             (fact (component assistant))
+             (rule reported-rule
+               (if (status ?c ?s))
+               (then (status-reported ?c)))
+             (rule unreported-rule
+               (if (component ?c) (not (status-reported ?c)))
+               (then (unreported ?c)))
+             (rule unreported-alert-rule
+               (if (unreported ?c))
+               (then (alert ?c no-status)))))
+
+    (:id "L081" :title "Open tasks"
+     :why "Lists the tasks and uses negation: a task that is not marked done is open."
+     :forms ((fact (task compile))
+             (fact (task build))
+             (fact (task test))
+             (fact (task deploy))
+             (fact (task bundle))
+             (rule open-task-rule
+               (if (task ?t) (not (done ?t)))
+               (then (open-task ?t)))))
+
+    (:id "L082" :title "Ready tasks"
+     :why "A task is blocked if anything it depends on is not done; an open task that is not blocked is ready to start."
+     :forms ((rule blocked-rule
+               (if (depends-on ?t ?p) (not (done ?p)))
+               (then (blocked ?t)))
+             (rule ready-rule
+               (if (open-task ?t) (not (blocked ?t)))
+               (then (ready ?t)))))
+
+    (:id "L083" :title "People without access"
+     :why "Uses negation to find people who have no permission at all."
+     :forms ((fact (person ana))
+             (fact (person ben))
+             (fact (person cai))
+             (fact (person dee))
+             (rule has-any-permission-rule
+               (if (permitted ?p ?x))
+               (then (has-any-permission ?p)))
+             (rule no-access-rule
+               (if (person ?p) (not (has-any-permission ?p)))
+               (then (no-access ?p)))))
+
+    (:id "L084" :title "Counting"
+     :why "Counts from 0 to 5 using arithmetic; the comparison stops the rule so it always finishes."
+     :forms ((fact (tick 0))
+             (rule tick-rule
+               (if (tick ?n) (lt ?n 5) (add ?n 1 ?m))
+               (then (tick ?m)))))
+
+    (:id "L085" :title "Squares"
+     :why "Squares of the counted numbers, using multiplication."
+     :forms ((rule square-rule
+               (if (tick ?n) (mul ?n ?n ?sq))
+               (then (square ?n ?sq)))))
+
+    (:id "L086" :title "Planets and moons"
+     :why "Planets and moons as kinds, with a trait that moons inherit."
+     :forms ((fact (is-a mercury planet))
+             (fact (is-a venus planet))
+             (fact (is-a earth planet))
+             (fact (is-a mars planet))
+             (fact (is-a moon satellite))
+             (fact (is-a phobos satellite))
+             (fact (has satellite orbit-around-planet))))
+
+    (:id "L087" :title "Musical notes"
+     :why "The seven note names in order; lower-note chains them so any earlier note is lower than any later one."
+     :forms ((fact (next-note c d))
+             (fact (next-note d e))
+             (fact (next-note e f))
+             (fact (next-note f g))
+             (fact (next-note g a))
+             (fact (next-note a b))
+             (fact (transitive-relation lower-note))
+             (rule lower-note-base-rule
+               (if (next-note ?x ?y))
+               (then (lower-note ?x ?y)))))
+
+    (:id "L088" :title "Length units"
+     :why "Units from small to large; chaining and the reverse relation tell the assistant which unit is bigger."
+     :forms ((fact (smaller-unit millimeter centimeter))
+             (fact (smaller-unit centimeter meter))
+             (fact (smaller-unit meter kilometer))
+             (fact (transitive-relation smaller-unit))
+             (fact (inverse-relation smaller-unit bigger-unit))))
+
+    (:id "L089" :title "Chores"
+     :why "Household chores and who has taken which; negation finds the ones nobody has taken."
+     :forms ((fact (chore dishes))
+             (fact (chore laundry))
+             (fact (chore trash))
+             (fact (assigned ana dishes))
+             (fact (assigned ben laundry))
+             (rule chore-assigned-rule
+               (if (assigned ?p ?c))
+               (then (chore-assigned ?c)))
+             (rule unassigned-chore-rule
+               (if (chore ?c) (not (chore-assigned ?c)))
+               (then (unassigned ?c)))))))
 
 ;;; ======================================================================
 ;;; Validation
@@ -1042,6 +1415,9 @@ explained. Returns (values ok-p problems stats)."
     (ancestor ?who dave)
     (mortal socrates)
     (sibling bob ?who)     ; the questions below get answers as lessons are applied
+    (empty-room ?room)
+    (ready ?task)
+    (overlaps ?a ?b)
     (suggest ?action ?device)
     (alert ?what ?level)
     (clash ?who ?a ?b)
@@ -1071,7 +1447,21 @@ explained. Returns (values ok-p problems stats)."
               reason (length derived)))
     (dolist (pattern *demo-questions*)
       (print-answers kb pattern))
+    (what-if-retracted kb '(status network down))
     (values)))
+
+(defun what-if-retracted (kb fact)
+  "Show what would stop being true if the given FACT were retracted."
+  (format t "What if ~a stopped being true?~%" (show fact))
+  (cond ((not (known-p kb fact))
+         (format t "  (that fact is not in the knowledge base yet)~%"))
+        (t
+         (let ((gone (retract-fact kb fact)))
+           (if (null gone)
+               (format t "  (it is derived rather than given, so it cannot be retracted)~%")
+               (dolist (old gone)
+                 (format t "  would no longer hold: ~a~%" (show old)))))))
+  (terpri))
 
 ;;; ======================================================================
 ;;; Evolution: one bounded step per run
@@ -1341,9 +1731,34 @@ without applying it. The workflow uses that after its fresh-process check fails.
 ;;; Entry point
 ;;; ======================================================================
 
+(defun split-commas (string)
+  (loop with start = 0
+        for comma = (position #\, string :start start)
+        collect (string-trim " " (subseq string start comma))
+        while comma
+        do (setf start (1+ comma))))
+
+(defun run-facts ()
+  "Print every fact after inference, or only those whose predicate is listed
+in the SAI_PREDICATES environment variable (comma separated)."
+  (let* ((kb (make-project-kb))
+         (wanted (sb-ext:posix-getenv "SAI_PREDICATES"))
+         (predicates (and wanted
+                          (plusp (length wanted))
+                          (mapcar (lambda (name)
+                                    (intern (string-upcase name) :symbolic-ai))
+                                  (split-commas wanted)))))
+    (forward-chain kb)
+    (dolist (fact (kb-facts kb))
+      (when (or (null predicates) (member (first fact) predicates))
+        (format t "~a~%" (show fact))))
+    (values)))
+
 (defun main ()
   (let ((mode (or (sb-ext:posix-getenv "SAI_MODE") "demo")))
     (cond ((string= mode "demo") (run-demo))
+          ((string= mode "facts") (run-facts))
+          ((string= mode "load") nil)
           ((string= mode "validate") (run-validate))
           ((string= mode "evolve") (evolve-step nil))
           ((string= mode "record-failure") (evolve-step t))
