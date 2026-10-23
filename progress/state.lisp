@@ -5,10 +5,13 @@
   "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040" "L041" "L042"
   "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050" "L051" "L052" "L053" "L054" "L055" "L056"
   "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068" "L069" "L070"
-  "L071" "L072" "L073" "L074" "L075" "L076" "L077" "L078" "L079" "L080" "L081" "L082" "L083"
-  "L084")
- :FAILED NIL :RUNS 85 :LOG
- ((:TIME "2026-10-23 17:27 UTC" :STATUS :APPLIED :LESSON "L084" :TITLE "Counting" :NOTE
+  "L071" "L072" "L073" "L074" "L075" "L076" "L077" "L078" "L079" "L080" "L081" "L082" "L083" "L084"
+  "L085")
+ :FAILED NIL :RUNS 86 :LOG
+ ((:TIME "2026-10-23 17:57 UTC" :STATUS :APPLIED :LESSON "L085" :TITLE "Squares" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 105 :GIVEN 309 :TOTAL 929))
+  (:TIME "2026-10-23 17:27 UTC" :STATUS :APPLIED :LESSON "L084" :TITLE "Counting" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 104 :GIVEN 309 :TOTAL 923))
   (:TIME "2026-10-23 16:24 UTC" :STATUS :APPLIED :LESSON "L083" :TITLE "People without access"
@@ -94,7 +97,4 @@
    (:RULES 69 :GIVEN 196 :TOTAL 657))
   (:TIME "2026-10-18 09:24 UTC" :STATUS :APPLIED :LESSON "L057" :TITLE "Priorities" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 68 :GIVEN 193 :TOTAL 652))
-  (:TIME "2026-10-18 09:00 UTC" :STATUS :APPLIED :LESSON "L056" :TITLE "Deadlines and reminders"
-   :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 66 :GIVEN 191 :TOTAL 648))))
+   (:RULES 68 :GIVEN 193 :TOTAL 652))))

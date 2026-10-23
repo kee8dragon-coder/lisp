@@ -656,3 +656,7 @@
 ;; Counts from 0 to 5 using arithmetic; the comparison stops the rule so it always finishes.
 (fact (tick 0))
 (rule tick-rule (if (tick ?n) (lt ?n 5) (add ?n 1 ?m)) (then (tick ?m)))
+
+;; --- L085: Squares (applied 2026-10-23 17:57 UTC) ---
+;; Squares of the counted numbers, using multiplication.
+(rule square-rule (if (tick ?n) (mul ?n ?n ?sq)) (then (square ?n ?sq)))
