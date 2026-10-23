@@ -585,3 +585,13 @@
 (fact (threshold low-battery 20))
 (rule low-battery-rule (if (battery ?d ?level) (threshold low-battery ?t) (lt ?level ?t)) (then (alert ?d low-battery)))
 (rule suggest-charge-rule (if (alert ?d low-battery)) (then (suggest charge ?d)))
+
+;; --- L077: Thermostat (applied 2026-10-23 11:12 UTC) ---
+;; Demo room temperatures against a comfort range; an occupied room that is too cold raises an alert.
+(fact (temperature lounge 17))
+(fact (temperature study 22))
+(fact (comfort lowest 19))
+(fact (comfort highest 24))
+(rule too-cold-rule (if (temperature ?r ?t) (comfort lowest ?m) (lt ?t ?m)) (then (too-cold ?r)))
+(rule too-warm-rule (if (temperature ?r ?t) (comfort highest ?m) (gt ?t ?m)) (then (too-warm ?r)))
+(rule cold-alert-rule (if (too-cold ?r) (occupied ?r)) (then (alert ?r too-cold)))
