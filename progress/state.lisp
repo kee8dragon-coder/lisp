@@ -7,8 +7,11 @@
   "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068" "L069" "L070"
   "L071" "L072" "L073" "L074" "L075" "L076" "L077" "L078" "L079" "L080" "L081" "L082" "L083" "L084"
   "L085" "L086" "L087" "L088" "L089")
- :FAILED NIL :RUNS 90 :LOG
- ((:TIME "2026-10-23 20:29 UTC" :STATUS :APPLIED :LESSON "L089" :TITLE "Chores" :NOTE
+ :FAILED NIL :RUNS 91 :LOG
+ ((:TIME "2026-10-23 21:00 UTC" :STATUS :NOOP :LESSON NIL :TITLE NIL :NOTE
+   "Every lesson has been applied or skipped. Add lessons to *lessons* in symbolic-ai.lisp." :STATS
+   (:RULES 108 :GIVEN 333 :TOTAL 988))
+  (:TIME "2026-10-23 20:29 UTC" :STATUS :APPLIED :LESSON "L089" :TITLE "Chores" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 108 :GIVEN 333 :TOTAL 988))
   (:TIME "2026-10-23 20:01 UTC" :STATUS :APPLIED :LESSON "L088" :TITLE "Length units" :NOTE
@@ -94,7 +97,4 @@
    (:RULES 75 :GIVEN 225 :TOTAL 741))
   (:TIME "2026-10-18 11:20 UTC" :STATUS :APPLIED :LESSON "L062" :TITLE "What the assistant can do"
    :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 74 :GIVEN 219 :TOTAL 732))
-  (:TIME "2026-10-18 10:58 UTC" :STATUS :APPLIED :LESSON "L061" :TITLE "Transit network" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 73 :GIVEN 211 :TOTAL 720))))
+   (:RULES 74 :GIVEN 219 :TOTAL 732))))
