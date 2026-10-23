@@ -651,3 +651,8 @@
 (fact (person dee))
 (rule has-any-permission-rule (if (permitted ?p ?x)) (then (has-any-permission ?p)))
 (rule no-access-rule (if (person ?p) (not (has-any-permission ?p))) (then (no-access ?p)))
+
+;; --- L084: Counting (applied 2026-10-23 17:27 UTC) ---
+;; Counts from 0 to 5 using arithmetic; the comparison stops the rule so it always finishes.
+(fact (tick 0))
+(rule tick-rule (if (tick ?n) (lt ?n 5) (add ?n 1 ?m)) (then (tick ?m)))
