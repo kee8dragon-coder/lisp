@@ -562,3 +562,13 @@
 (fact (device-type oven appliance))
 (fact (state oven on))
 (rule unattended-appliance-rule (if (device-type ?d appliance) (state ?d on) (device-in ?d ?r) (not (occupied ?r))) (then (alert ?d unattended)))
+
+;; --- L074: Event times (applied 2026-10-23 09:09 UTC) ---
+;; Start hours and lengths for the Monday events; arithmetic works out when each one ends.
+(fact (starts standup 9))
+(fact (lasts standup 1))
+(fact (starts review 9))
+(fact (lasts review 2))
+(fact (starts lunch 12))
+(fact (lasts lunch 1))
+(rule ends-rule (if (starts ?e ?s) (lasts ?e ?d) (add ?s ?d ?end)) (then (ends ?e ?end)))

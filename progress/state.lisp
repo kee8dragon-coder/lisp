@@ -5,9 +5,12 @@
   "L029" "L030" "L031" "L032" "L033" "L034" "L035" "L036" "L037" "L038" "L039" "L040" "L041" "L042"
   "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050" "L051" "L052" "L053" "L054" "L055" "L056"
   "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068" "L069" "L070"
-  "L071" "L072" "L073")
- :FAILED NIL :RUNS 74 :LOG
- ((:TIME "2026-10-23 08:32 UTC" :STATUS :APPLIED :LESSON "L073" :TITLE "Unattended appliances"
+  "L071" "L072" "L073" "L074")
+ :FAILED NIL :RUNS 75 :LOG
+ ((:TIME "2026-10-23 09:09 UTC" :STATUS :APPLIED :LESSON "L074" :TITLE "Event times" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 83 :GIVEN 276 :TOTAL 849))
+  (:TIME "2026-10-23 08:32 UTC" :STATUS :APPLIED :LESSON "L073" :TITLE "Unattended appliances"
    :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 82 :GIVEN 270 :TOTAL 840))
   (:TIME "2026-10-23 08:00 UTC" :STATUS :APPLIED :LESSON "L072" :TITLE "Wasted energy" :NOTE
@@ -94,7 +97,4 @@
    (:RULES 53 :GIVEN 153 :TOTAL 552))
   (:TIME "2026-10-18 04:29 UTC" :STATUS :APPLIED :LESSON "L046" :TITLE "Before and after" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 52 :GIVEN 148 :TOTAL 543))
-  (:TIME "2026-10-18 04:02 UTC" :STATUS :APPLIED :LESSON "L045" :TITLE "Same country" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 52 :GIVEN 143 :TOTAL 529))))
+   (:RULES 52 :GIVEN 148 :TOTAL 543))))
