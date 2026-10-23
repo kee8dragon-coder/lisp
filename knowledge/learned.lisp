@@ -595,3 +595,13 @@
 (rule too-cold-rule (if (temperature ?r ?t) (comfort lowest ?m) (lt ?t ?m)) (then (too-cold ?r)))
 (rule too-warm-rule (if (temperature ?r ?t) (comfort highest ?m) (gt ?t ?m)) (then (too-warm ?r)))
 (rule cold-alert-rule (if (too-cold ?r) (occupied ?r)) (then (alert ?r too-cold)))
+
+;; --- L078: Countdowns (applied 2026-10-23 11:43 UTC) ---
+;; Demo due dates as day numbers; subtraction gives the days left, and the assistant flags what is due soon or already past due.
+(fact (current-date 15))
+(fact (due-date taxes 20))
+(fact (due-date passport 40))
+(fact (due-date rent 10))
+(rule days-left-rule (if (due-date ?t ?d) (current-date ?n) (sub ?d ?n ?left)) (then (days-left ?t ?left)))
+(rule due-soon-rule (if (days-left ?t ?x) (ge ?x 0) (lt ?x 8)) (then (due-soon ?t)))
+(rule past-due-rule (if (days-left ?t ?x) (lt ?x 0)) (then (past-due ?t)))
