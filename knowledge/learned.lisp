@@ -572,3 +572,7 @@
 (fact (starts lunch 12))
 (fact (lasts lunch 1))
 (rule ends-rule (if (starts ?e ?s) (lasts ?e ?d) (add ?s ?d ?end)) (then (ends ?e ?end)))
+
+;; --- L075: Overlapping events (applied 2026-10-23 10:11 UTC) ---
+;; Two different events overlap when each one starts before the other ends.
+(rule overlap-rule (if (starts ?a ?s1) (ends ?a ?e1) (starts ?b ?s2) (ends ?b ?e2) (different ?a ?b) (lt ?s1 ?e2) (lt ?s2 ?e1)) (then (overlaps ?a ?b)))
