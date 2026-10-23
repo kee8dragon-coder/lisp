@@ -605,3 +605,15 @@
 (rule days-left-rule (if (due-date ?t ?d) (current-date ?n) (sub ?d ?n ?left)) (then (days-left ?t ?left)))
 (rule due-soon-rule (if (days-left ?t ?x) (ge ?x 0) (lt ?x 8)) (then (due-soon ?t)))
 (rule past-due-rule (if (days-left ?t ?x) (lt ?x 0)) (then (past-due ?t)))
+
+;; --- L079: Budget (applied 2026-10-23 12:47 UTC) ---
+;; A demo budget; subtraction gives what is left in each category and anything below zero is over budget.
+(fact (spent food 120))
+(fact (spent transport 45))
+(fact (spent fun 80))
+(fact (budget food 150))
+(fact (budget transport 60))
+(fact (budget fun 60))
+(rule remaining-rule (if (spent ?c ?s) (budget ?c ?b) (sub ?b ?s ?left)) (then (remaining ?c ?left)))
+(rule over-budget-rule (if (remaining ?c ?left) (lt ?left 0)) (then (over-budget ?c)))
+(rule budget-alert-rule (if (over-budget ?c)) (then (alert ?c over-budget)))
