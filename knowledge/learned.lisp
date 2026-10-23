@@ -689,3 +689,13 @@
 (fact (smaller-unit meter kilometer))
 (fact (transitive-relation smaller-unit))
 (fact (inverse-relation smaller-unit bigger-unit))
+
+;; --- L089: Chores (applied 2026-10-23 20:29 UTC) ---
+;; Household chores and who has taken which; negation finds the ones nobody has taken.
+(fact (chore dishes))
+(fact (chore laundry))
+(fact (chore trash))
+(fact (assigned ana dishes))
+(fact (assigned ben laundry))
+(rule chore-assigned-rule (if (assigned ?p ?c)) (then (chore-assigned ?c)))
+(rule unassigned-chore-rule (if (chore ?c) (not (chore-assigned ?c))) (then (unassigned ?c)))
