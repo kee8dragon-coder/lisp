@@ -576,3 +576,12 @@
 ;; --- L075: Overlapping events (applied 2026-10-23 10:11 UTC) ---
 ;; Two different events overlap when each one starts before the other ends.
 (rule overlap-rule (if (starts ?a ?s1) (ends ?a ?e1) (starts ?b ?s2) (ends ?b ?e2) (different ?a ?b) (lt ?s1 ?e2) (lt ?s2 ?e1)) (then (overlaps ?a ?b)))
+
+;; --- L076: Battery levels (applied 2026-10-23 10:41 UTC) ---
+;; Demo battery readings; a device below the low-battery threshold gets an alert and a charging suggestion.
+(fact (battery phone 15))
+(fact (battery tablet 80))
+(fact (battery watch 8))
+(fact (threshold low-battery 20))
+(rule low-battery-rule (if (battery ?d ?level) (threshold low-battery ?t) (lt ?level ?t)) (then (alert ?d low-battery)))
+(rule suggest-charge-rule (if (alert ?d low-battery)) (then (suggest charge ?d)))
