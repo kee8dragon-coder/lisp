@@ -1,8 +1,8 @@
 # Latest automation run
 
-### 2026-10-23 15:54 UTC - Applied a lesson
+### 2026-10-23 16:24 UTC - Applied a lesson
 
-- Lesson: L082 - Ready tasks
+- Lesson: L083 - People without access
 - Result: Validated: the knowledge base loaded in SBCL and inference reached a fixpoint.
-- Knowledge now: 101 rules, 304 given facts, 909 facts after inference
+- Knowledge now: 103 rules, 308 given facts, 917 facts after inference
 

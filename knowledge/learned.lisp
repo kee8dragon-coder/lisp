@@ -642,3 +642,12 @@
 ;; A task is blocked if anything it depends on is not done; an open task that is not blocked is ready to start.
 (rule blocked-rule (if (depends-on ?t ?p) (not (done ?p))) (then (blocked ?t)))
 (rule ready-rule (if (open-task ?t) (not (blocked ?t))) (then (ready ?t)))
+
+;; --- L083: People without access (applied 2026-10-23 16:24 UTC) ---
+;; Uses negation to find people who have no permission at all.
+(fact (person ana))
+(fact (person ben))
+(fact (person cai))
+(fact (person dee))
+(rule has-any-permission-rule (if (permitted ?p ?x)) (then (has-any-permission ?p)))
+(rule no-access-rule (if (person ?p) (not (has-any-permission ?p))) (then (no-access ?p)))
