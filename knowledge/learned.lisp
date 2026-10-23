@@ -670,3 +670,14 @@
 (fact (is-a moon satellite))
 (fact (is-a phobos satellite))
 (fact (has satellite orbit-around-planet))
+
+;; --- L087: Musical notes (applied 2026-10-23 19:34 UTC) ---
+;; The seven note names in order; lower-note chains them so any earlier note is lower than any later one.
+(fact (next-note c d))
+(fact (next-note d e))
+(fact (next-note e f))
+(fact (next-note f g))
+(fact (next-note g a))
+(fact (next-note a b))
+(fact (transitive-relation lower-note))
+(rule lower-note-base-rule (if (next-note ?x ?y)) (then (lower-note ?x ?y)))
