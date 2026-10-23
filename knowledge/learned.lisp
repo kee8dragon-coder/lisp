@@ -555,3 +555,10 @@
 ;; --- L072: Wasted energy (applied 2026-10-23 08:00 UTC) ---
 ;; Anything switched on in an empty room becomes a suggestion to switch it off, worked out from who is where.
 (rule wasted-energy-rule (if (empty-room ?r) (device-in ?d ?r) (state ?d on)) (then (suggest turn-off ?d)))
+
+;; --- L073: Unattended appliances (applied 2026-10-23 08:32 UTC) ---
+;; Adds an oven left on in the kitchen; an appliance that is on in an empty room raises a warning.
+(fact (device-in oven kitchen))
+(fact (device-type oven appliance))
+(fact (state oven on))
+(rule unattended-appliance-rule (if (device-type ?d appliance) (state ?d on) (device-in ?d ?r) (not (occupied ?r))) (then (alert ?d unattended)))
