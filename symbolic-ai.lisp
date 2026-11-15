@@ -44,8 +44,8 @@
 ;;;;   1 Engine (DONE): fact index by predicate; integer built-ins; negation as
 ;;;;     failure (two phases plus a conflict check, not full stratification);
 ;;;;     retraction with dependent facts.
-;;;;   2 Explanations: "why not?" (which condition failed); proof trees as data;
-;;;;     plain-English templates; contradiction detection.
+;;;;   2 Explanations [DONE]: why-not; proof trees as data (proof-tree); plain-English
+;;;;     templates (english); contradiction detection (find-contradictions).
 ;;;;   3 Queries: conjunctive queries; backward chaining with unification; a REPL.
 ;;;;   4 Knowledge management: modules; provenance (source, date, confidence);
 ;;;;     export/import of s-expressions.
