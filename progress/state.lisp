@@ -6,9 +6,13 @@
   "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050" "L051" "L052" "L053" "L054" "L055" "L056"
   "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068" "L069" "L070"
   "L071" "L072" "L073" "L074" "L075" "L076" "L077" "L078" "L079" "L080" "L081" "L082" "L083" "L084"
-  "L085" "L086" "L087" "L088" "L089" "L090" "L091" "L092" "L093" "L094" "L095" "L097" "L099")
- :FAILED ("L096" "L098") :RUNS 101 :LOG
- ((:TIME "2026-11-15 12:48 UTC" :STATUS :APPLIED :LESSON "L099" :TITLE "Lighter elements" :NOTE
+  "L085" "L086" "L087" "L088" "L089" "L090" "L091" "L092" "L093" "L094" "L095" "L097" "L099"
+  "L100")
+ :FAILED ("L096" "L098") :RUNS 102 :LOG
+ ((:TIME "2026-11-15 19:09 UTC" :STATUS :APPLIED :LESSON "L100" :TITLE "Time zones" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 122 :GIVEN 373 :TOTAL 1069))
+  (:TIME "2026-11-15 12:48 UTC" :STATUS :APPLIED :LESSON "L099" :TITLE "Lighter elements" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 120 :GIVEN 370 :TOTAL 1057))
   (:TIME "2026-11-15 12:02 UTC" :STATUS :FAILED :LESSON "L098" :TITLE "Colour mixing" :NOTE
@@ -94,7 +98,4 @@
    (:RULES 82 :GIVEN 270 :TOTAL 840))
   (:TIME "2026-10-23 08:00 UTC" :STATUS :APPLIED :LESSON "L072" :TITLE "Wasted energy" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 81 :GIVEN 267 :TOTAL 832))
-  (:TIME "2026-10-23 07:21 UTC" :STATUS :APPLIED :LESSON "L071" :TITLE "Empty rooms" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 80 :GIVEN 267 :TOTAL 832))))
+   (:RULES 81 :GIVEN 267 :TOTAL 832))))

@@ -774,3 +774,11 @@
 (fact (atomic-number oxygen 8))
 (fact (atomic-number iron 26))
 (rule lighter-rule (if (atomic-number ?a ?n) (atomic-number ?b ?m) (lt ?n ?m)) (then (lighter ?a ?b)))
+
+;; --- L100: Time zones (applied 2026-11-15 19:09 UTC) ---
+;; Offsets from UTC give how many hours one city is ahead of another.
+(fact (utc-offset singapore 8))
+(fact (utc-offset london 0))
+(fact (utc-offset new-york -5))
+(rule hours-ahead-rule (if (utc-offset ?a ?x) (utc-offset ?b ?y) (different ?a ?b) (sub ?x ?y ?d)) (then (hours-difference ?a ?b ?d)))
+(rule ahead-of-rule (if (hours-difference ?a ?b ?d) (gt ?d 0)) (then (ahead-of ?a ?b)))
