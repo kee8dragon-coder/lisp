@@ -705,3 +705,15 @@
 (fact (functional state))
 (fact (functional at))
 (fact (functional power-watts))
+
+;; --- L091: Recipes and the pantry (applied 2026-11-15 06:39 UTC) ---
+;; Recipes list ingredients; anything not in the pantry is missing and goes on the shopping list.
+(fact (recipe pasta))
+(fact (recipe omelette))
+(fact (ingredient pasta noodles))
+(fact (ingredient pasta sauce))
+(fact (ingredient omelette eggs))
+(fact (in-pantry noodles))
+(fact (in-pantry eggs))
+(rule missing-ingredient-rule (if (recipe ?r) (ingredient ?r ?i) (not (in-pantry ?i))) (then (missing-ingredient ?r ?i)))
+(rule shopping-list-rule (if (missing-ingredient ?r ?i)) (then (shopping-item ?i)))

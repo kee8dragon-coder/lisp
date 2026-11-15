@@ -1,8 +1,8 @@
 # Latest automation run
 
-### 2026-11-15 05:49 UTC - Applied a lesson
+### 2026-11-15 06:39 UTC - Applied a lesson
 
-- Lesson: L090 - Guardrails for contradictions
+- Lesson: L091 - Recipes and the pantry
 - Result: Validated: the knowledge base loaded in SBCL and inference reached a fixpoint.
-- Knowledge now: 108 rules, 336 given facts, 991 facts after inference
+- Knowledge now: 110 rules, 343 given facts, 1000 facts after inference
 
