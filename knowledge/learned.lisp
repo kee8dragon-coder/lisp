@@ -745,3 +745,11 @@
 (fact (fuel-low-below 25))
 (rule low-fuel-rule (if (fuel-percent ?v ?p) (fuel-low-below ?t) (lt ?p ?t)) (then (low-fuel ?v)))
 (rule refuel-suggestion-rule (if (low-fuel ?v)) (then (suggest refuel ?v)))
+
+;; --- L095: Subscription costs (applied 2026-11-15 10:06 UTC) ---
+;; Monthly prices times twelve give a yearly cost; yearly costs over 100 are flagged for review.
+(fact (monthly-price music 10))
+(fact (monthly-price news 3))
+(fact (monthly-price video 15))
+(rule yearly-cost-rule (if (monthly-price ?s ?m) (mul ?m 12 ?y)) (then (yearly-cost ?s ?y)))
+(rule costly-subscription-rule (if (yearly-cost ?s ?y) (gt ?y 100)) (then (review-subscription ?s)))
