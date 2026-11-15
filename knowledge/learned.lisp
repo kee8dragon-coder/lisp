@@ -728,3 +728,12 @@
 (fact (calories toast 90))
 (rule meal-calories-rule (if (meal ?m ?a ?b) (calories ?a ?x) (calories ?b ?y) (add ?x ?y ?t)) (then (meal-calories ?m ?t)))
 (rule heavy-meal-rule (if (meal-calories ?m ?t) (gt ?t 400)) (then (heavy-meal ?m)))
+
+;; --- L093: Plant watering (applied 2026-11-15 08:32 UTC) ---
+;; A plant is thirsty when the days since it was watered reach its watering interval.
+(fact (water-every fern 3))
+(fact (water-every cactus 14))
+(fact (days-since-watered fern 4))
+(fact (days-since-watered cactus 5))
+(rule thirsty-plant-rule (if (days-since-watered ?p ?d) (water-every ?p ?n) (ge ?d ?n)) (then (thirsty ?p)))
+(rule water-suggestion-rule (if (thirsty ?p)) (then (suggest water ?p)))
