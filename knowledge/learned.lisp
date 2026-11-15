@@ -737,3 +737,11 @@
 (fact (days-since-watered cactus 5))
 (rule thirsty-plant-rule (if (days-since-watered ?p ?d) (water-every ?p ?n) (ge ?d ?n)) (then (thirsty ?p)))
 (rule water-suggestion-rule (if (thirsty ?p)) (then (suggest water ?p)))
+
+;; --- L094: Fuel and range (applied 2026-11-15 09:19 UTC) ---
+;; A vehicle below the fuel threshold needs refuelling.
+(fact (fuel-percent car 18))
+(fact (fuel-percent scooter 70))
+(fact (fuel-low-below 25))
+(rule low-fuel-rule (if (fuel-percent ?v ?p) (fuel-low-below ?t) (lt ?p ?t)) (then (low-fuel ?v)))
+(rule refuel-suggestion-rule (if (low-fuel ?v)) (then (suggest refuel ?v)))
