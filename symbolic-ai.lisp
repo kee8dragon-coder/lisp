@@ -1618,6 +1618,54 @@ it, the first condition that fails."
           (format t "~a (not known)~%" (english fact))))
     (values)))
 
+;;; Phase 2: contradiction detection
+;;; Registry facts say what cannot both be true:
+;;;   (functional p)   a thing has at most one value: (p x a) and (p x b) clash when a differs from b
+;;;   (disjoint a b)   nothing is both (is-a x a) and (is-a x b)
+
+(defun find-contradictions (kb)
+  "A list of (fact1 fact2 reason) for facts that cannot both hold."
+  (let ((found '()))
+    (dolist (reg (gethash 'functional (kb-index kb)))
+      (let ((p (second reg)) (seen '()))
+        (dolist (f (gethash p (kb-index kb)))
+          (when (= (length f) 3)
+            (dolist (g seen)
+              (when (and (equal (second f) (second g))
+                         (not (equal (third f) (third g))))
+                (push (list g f (format nil "~(~a~) allows one value per thing" p))
+                      found)))
+            (push f seen)))))
+    (dolist (reg (gethash 'disjoint (kb-index kb)))
+      (dolist (f (gethash 'is-a (kb-index kb)))
+        (when (equal (third f) (second reg))
+          (let ((g (list 'is-a (second f) (third reg))))
+            (when (known-p kb g)
+              (push (list f g (format nil "~(~a~) and ~(~a~) exclude each other"
+                                      (second reg) (third reg)))
+                    found))))))
+    (nreverse found)))
+
+(defun report-contradictions (kb &optional (label "knowledge base"))
+  (let ((found (find-contradictions kb)))
+    (format t "Contradictions in the ~a: ~d~%" label (length found))
+    (dolist (c found)
+      (format t "  ~a  vs  ~a  (~a)~%" (english (first c)) (english (second c)) (third c)))))
+
+(defun run-contradictions ()
+  (let ((kb (make-project-kb)))
+    (forward-chain kb)
+    (report-contradictions kb "real knowledge base")
+    (let ((demo (make-kb)))
+      (dolist (f '((functional state) (functional at) (disjoint bird fish)
+                   (state fan on) (state fan off) (state lamp on)
+                   (at ana lounge) (at ana study)
+                   (is-a nemo fish) (is-a nemo bird) (is-a tweety bird)))
+        (add-fact demo f))
+      (terpri)
+      (report-contradictions demo "demo set"))
+    (values)))
+
 ;;; ======================================================================
 ;;; Evolution: one bounded step per run
 ;;; Writes only: knowledge/learned.lisp, PROGRESS.md, progress/*
@@ -1916,6 +1964,7 @@ in the SAI_PREDICATES environment variable (comma separated)."
           ((string= mode "whynot") (run-whynot))
           ((string= mode "proof") (run-proof))
           ((string= mode "english") (run-english))
+          ((string= mode "contradictions") (run-contradictions))
           ((string= mode "load") nil)
           ((string= mode "validate") (run-validate))
           ((string= mode "evolve") (evolve-step nil))

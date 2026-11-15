@@ -107,6 +107,13 @@ jobs:
           set -o pipefail
           sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp 2>&1 | tee /tmp/english.txt
 
+      - name: Contradictions (Phase 2)
+        env:
+          SAI_MODE: contradictions
+        run: |
+          set -o pipefail
+          sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp 2>&1 | tee /tmp/contra.txt
+
       - name: Summary
         if: always()
         run: |
@@ -132,3 +139,4 @@ jobs:
           emit "whynot" /tmp/whynot.txt
           emit "proof" /tmp/proof.txt
           emit "english" /tmp/english.txt
+          emit "contradictions" /tmp/contra.txt
