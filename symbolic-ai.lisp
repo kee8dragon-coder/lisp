@@ -47,12 +47,23 @@
 ;;;;   2 Explanations [DONE]: why-not; proof trees as data (proof-tree); plain-English
 ;;;;     templates (english); contradiction detection (find-contradictions).
 ;;;;   3 Queries: conjunctive queries; backward chaining with unification; a REPL.
-;;;;   4 Knowledge management: modules; provenance (source, date, confidence);
-;;;;     export/import of s-expressions.
-;;;;   5 Language: controlled English in ("Alice is a parent of Bob"), templates out.
-;;;;   6 Planning: STRIPS-style planner; simple constraint solving.
-;;;;   7 Later: a narrow bridge to neural components that only PROPOSE facts or
-;;;;     rules, going through the same validation and review path as lessons.
+;;;;   4 Trust layer: provenance (source, date, confidence) on every fact; a staging
+;;;;     area for new knowledge; checks that new knowledge does not contradict or
+;;;;     break what is already known; export/import of s-expressions.
+;;;;   5 Interface protocol: one fixed plain-data format (queries in; answers and
+;;;;     proofs out) over stdin/stdout or a local socket, so any neural model can
+;;;;     plug in without touching the engine.
+;;;;   6 Neural bridge: a language model turns speech/text into queries and facts
+;;;;     and turns proofs back into natural language. It translates only; the
+;;;;     symbolic side keeps the facts and does the reasoning.
+;;;;   7 Self-growth: the model PROPOSES facts and rules from conversations and from
+;;;;     logged knowledge gaps (questions it could not answer); rules may also be
+;;;;     induced from its own facts. Every proposal is plain data, validated,
+;;;;     tested against existing knowledge, staged, then promoted. Low-risk
+;;;;     high-confidence facts may auto-promote; new rules and anything touching
+;;;;     devices or secrets wait for human review. No code is ever executed.
+;;;;   8 Planning and actions: STRIPS-style planner; constraint solving. Actions on
+;;;;     real things always ask for confirmation first.
 
 (defpackage :symbolic-ai
   (:use :cl))
