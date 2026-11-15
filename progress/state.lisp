@@ -6,9 +6,13 @@
   "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050" "L051" "L052" "L053" "L054" "L055" "L056"
   "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068" "L069" "L070"
   "L071" "L072" "L073" "L074" "L075" "L076" "L077" "L078" "L079" "L080" "L081" "L082" "L083" "L084"
-  "L085" "L086" "L087" "L088" "L089")
- :FAILED NIL :RUNS 91 :LOG
- ((:TIME "2026-10-23 21:00 UTC" :STATUS :NOOP :LESSON NIL :TITLE NIL :NOTE
+  "L085" "L086" "L087" "L088" "L089" "L090")
+ :FAILED NIL :RUNS 92 :LOG
+ ((:TIME "2026-11-15 05:49 UTC" :STATUS :APPLIED :LESSON "L090" :TITLE
+   "Guardrails for contradictions" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 108 :GIVEN 336 :TOTAL 991))
+  (:TIME "2026-10-23 21:00 UTC" :STATUS :NOOP :LESSON NIL :TITLE NIL :NOTE
    "Every lesson has been applied or skipped. Add lessons to *lessons* in symbolic-ai.lisp." :STATS
    (:RULES 108 :GIVEN 333 :TOTAL 988))
   (:TIME "2026-10-23 20:29 UTC" :STATUS :APPLIED :LESSON "L089" :TITLE "Chores" :NOTE
@@ -94,7 +98,4 @@
    (:RULES 76 :GIVEN 232 :TOTAL 756))
   (:TIME "2026-10-18 11:44 UTC" :STATUS :APPLIED :LESSON "L063" :TITLE "Programming languages"
    :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 75 :GIVEN 225 :TOTAL 741))
-  (:TIME "2026-10-18 11:20 UTC" :STATUS :APPLIED :LESSON "L062" :TITLE "What the assistant can do"
-   :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 74 :GIVEN 219 :TOTAL 732))))
+   (:RULES 75 :GIVEN 225 :TOTAL 741))))

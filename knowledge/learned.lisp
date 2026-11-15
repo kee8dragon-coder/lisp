@@ -699,3 +699,9 @@
 (fact (assigned ben laundry))
 (rule chore-assigned-rule (if (assigned ?p ?c)) (then (chore-assigned ?c)))
 (rule unassigned-chore-rule (if (chore ?c) (not (chore-assigned ?c))) (then (unassigned ?c)))
+
+;; --- L090: Guardrails for contradictions (applied 2026-11-15 05:49 UTC) ---
+;; Declares that a device or person has only one state or place at a time, so find-contradictions can flag clashes.
+(fact (functional state))
+(fact (functional at))
+(fact (functional power-watts))
