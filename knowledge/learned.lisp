@@ -765,3 +765,12 @@
 (fact (country-in egypt africa))
 (fact (country-in peru south-america))
 (rule capital-continent-rule (if (capital-of ?c ?n) (country-in ?n ?k)) (then (capital-in ?c ?k)))
+
+;; --- L099: Lighter elements (applied 2026-11-15 12:48 UTC) ---
+;; Elements have atomic numbers; one is lighter than another when its number is smaller.
+(fact (atomic-number hydrogen 1))
+(fact (atomic-number helium 2))
+(fact (atomic-number carbon 6))
+(fact (atomic-number oxygen 8))
+(fact (atomic-number iron 26))
+(rule lighter-rule (if (atomic-number ?a ?n) (atomic-number ?b ?m) (lt ?n ?m)) (then (lighter ?a ?b)))
