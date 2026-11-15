@@ -1535,6 +1535,38 @@ it, the first condition that fails."
       (terpri))
     (values)))
 
+;;; Phase 2: proof trees as data
+
+(defun proof-tree (kb fact)
+  "A proof as plain data: (fact :given), (fact :absent) for a negation,
+(fact :unknown), or (fact :rule NAME CHILD...) with one child per support."
+  (let ((why (gethash fact (kb-why kb))))
+    (cond ((and (consp fact) (eq (first fact) 'not)) (list fact :absent))
+          ((null why) (list fact :unknown))
+          ((eq (first why) :given) (list fact :given))
+          (t (list* fact :rule (second why)
+                    (mapcar (lambda (s) (proof-tree kb s)) (third why)))))))
+
+(defun proof-size (tree)
+  "Number of nodes in a proof tree."
+  (1+ (reduce #'+ (mapcar #'proof-size (cdddr tree)))))
+
+(defun proof-leaves (tree)
+  "The given facts a proof rests on."
+  (if (eq (second tree) :rule)
+      (remove-duplicates (mapcan #'proof-leaves (copy-list (cdddr tree))) :test #'equal)
+      (and (eq (second tree) :given) (list (first tree)))))
+
+(defun run-proof ()
+  (let ((kb (make-project-kb)))
+    (forward-chain kb)
+    (dolist (fact '((grandparent alice carol) (suggest turn-off fan)))
+      (let ((tree (proof-tree kb fact)))
+        (format t "~a~%  tree: ~a~%  nodes: ~d~%  rests on: ~a~%~%"
+                (show fact) (show tree) (proof-size tree)
+                (show (proof-leaves tree)))))
+    (values)))
+
 ;;; ======================================================================
 ;;; Evolution: one bounded step per run
 ;;; Writes only: knowledge/learned.lisp, PROGRESS.md, progress/*
@@ -1831,6 +1863,7 @@ in the SAI_PREDICATES environment variable (comma separated)."
     (cond ((string= mode "demo") (run-demo))
           ((string= mode "facts") (run-facts))
           ((string= mode "whynot") (run-whynot))
+          ((string= mode "proof") (run-proof))
           ((string= mode "load") nil)
           ((string= mode "validate") (run-validate))
           ((string= mode "evolve") (evolve-step nil))

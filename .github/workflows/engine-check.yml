@@ -93,6 +93,13 @@ jobs:
           set -o pipefail
           sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp 2>&1 | tee /tmp/whynot.txt
 
+      - name: Proof trees (Phase 2)
+        env:
+          SAI_MODE: proof
+        run: |
+          set -o pipefail
+          sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp 2>&1 | tee /tmp/proof.txt
+
       - name: Summary
         if: always()
         run: |
@@ -116,3 +123,4 @@ jobs:
           emit "facts" /tmp/facts.txt
           emit "demo" /tmp/demo.txt
           emit "whynot" /tmp/whynot.txt
+          emit "proof" /tmp/proof.txt
