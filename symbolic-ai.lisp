@@ -44,15 +44,26 @@
 ;;;;   1 Engine (DONE): fact index by predicate; integer built-ins; negation as
 ;;;;     failure (two phases plus a conflict check, not full stratification);
 ;;;;     retraction with dependent facts.
-;;;;   2 Explanations: "why not?" (which condition failed); proof trees as data;
-;;;;     plain-English templates; contradiction detection.
+;;;;   2 Explanations [DONE]: why-not; proof trees as data (proof-tree); plain-English
+;;;;     templates (english); contradiction detection (find-contradictions).
 ;;;;   3 Queries: conjunctive queries; backward chaining with unification; a REPL.
-;;;;   4 Knowledge management: modules; provenance (source, date, confidence);
-;;;;     export/import of s-expressions.
-;;;;   5 Language: controlled English in ("Alice is a parent of Bob"), templates out.
-;;;;   6 Planning: STRIPS-style planner; simple constraint solving.
-;;;;   7 Later: a narrow bridge to neural components that only PROPOSE facts or
-;;;;     rules, going through the same validation and review path as lessons.
+;;;;   4 Trust layer: provenance (source, date, confidence) on every fact; a staging
+;;;;     area for new knowledge; checks that new knowledge does not contradict or
+;;;;     break what is already known; export/import of s-expressions.
+;;;;   5 Interface protocol: one fixed plain-data format (queries in; answers and
+;;;;     proofs out) over stdin/stdout or a local socket, so any neural model can
+;;;;     plug in without touching the engine.
+;;;;   6 Neural bridge: a language model turns speech/text into queries and facts
+;;;;     and turns proofs back into natural language. It translates only; the
+;;;;     symbolic side keeps the facts and does the reasoning.
+;;;;   7 Self-growth: the model PROPOSES facts and rules from conversations and from
+;;;;     logged knowledge gaps (questions it could not answer); rules may also be
+;;;;     induced from its own facts. Every proposal is plain data, validated,
+;;;;     tested against existing knowledge, staged, then promoted. Low-risk
+;;;;     high-confidence facts may auto-promote; new rules and anything touching
+;;;;     devices or secrets wait for human review. No code is ever executed.
+;;;;   8 Planning and actions: STRIPS-style planner; constraint solving. Actions on
+;;;;     real things always ask for confirmation first.
 
 (defpackage :symbolic-ai
   (:use :cl))
@@ -1438,18 +1449,6 @@ explained. Returns (values ok-p problems stats)."
           (explain kb (substitute-bindings pattern bindings) :depth 1)))
     (terpri)))
 
-(defun run-demo ()
-  (let ((kb (make-project-kb)))
-    (format t "Loaded ~d facts and ~d rules.~%"
-            (length (kb-facts kb)) (length (kb-rules kb)))
-    (multiple-value-bind (derived reason) (forward-chain kb)
-      (format t "Inference stopped: ~(~a~). ~d new facts derived.~%~%"
-              reason (length derived)))
-    (dolist (pattern *demo-questions*)
-      (print-answers kb pattern))
-    (what-if-retracted kb '(status network down))
-    (values)))
-
 (defun what-if-retracted (kb fact)
   "Show what would stop being true if the given FACT were retracted."
   (format t "What if ~a stopped being true?~%" (show fact))
@@ -1462,6 +1461,221 @@ explained. Returns (values ok-p problems stats)."
                (dolist (old gone)
                  (format t "  would no longer hold: ~a~%" (show old)))))))
   (terpri))
+
+(defun run-demo ()
+  (let ((kb (make-project-kb)))
+    (format t "Loaded ~d facts and ~d rules.~%"
+            (length (kb-facts kb)) (length (kb-rules kb)))
+    (multiple-value-bind (derived reason) (forward-chain kb)
+      (format t "Inference stopped: ~(~a~). ~d new facts derived.~%~%"
+              reason (length derived)))
+    (dolist (pattern *demo-questions*)
+      (print-answers kb pattern))
+    (what-if-retracted kb '(status network down))
+    (values)))
+
+;;; Phase 2: "why not?" (explain a fact that is NOT known)
+
+(defun blocker (kb conditions bindings depth)
+  "Walk CONDITIONS in order. Returns (values depth message) for the furthest
+condition that cannot be satisfied, or NIL when every condition can be."
+  (if (null conditions)
+      nil
+      (let ((pattern (substitute-bindings (first conditions) bindings)))
+        (if (builtin-condition-p pattern)
+            (multiple-value-bind (ok new-bindings)
+                (eval-builtin kb pattern bindings '())
+              (if ok
+                  (blocker kb (rest conditions) new-bindings (1+ depth))
+                  (values depth
+                          (if (and (eq (first pattern) 'not)
+                                   (consp (second pattern))
+                                   (ground-p (second pattern))
+                                   (known-p kb (second pattern)))
+                              (format nil "~a is known, so the negated condition fails"
+                                      (show (second pattern)))
+                              (format nil "the test ~a does not hold" (show pattern))))))
+            (let ((best-depth -1) (best-message nil) (matched nil))
+              (dolist (fact (candidate-facts kb pattern))
+                (let ((b (match pattern fact bindings)))
+                  (unless (eq b :fail)
+                    (setf matched t)
+                    (multiple-value-bind (d m)
+                        (blocker kb (rest conditions) b (1+ depth))
+                      (when (null d) (return-from blocker nil))
+                      (when (> d best-depth)
+                        (setf best-depth d best-message m))))))
+              (if matched
+                  (values best-depth best-message)
+                  (values depth
+                          (format nil "no known fact matches ~a" (show pattern)))))))))
+
+(defun why-not (kb fact &key (stream *standard-output*))
+  "Print why the ground FACT is not known: for each rule that could conclude
+it, the first condition that fails."
+  (cond ((known-p kb fact)
+         (format stream "~a IS known:~%" (show fact))
+         (explain kb fact :stream stream :depth 1))
+        (t
+         (format stream "~a is not known.~%" (show fact))
+         (let ((tried 0))
+           (dolist (rule (kb-rules kb))
+             (let ((b (match (rule-conclusion rule) fact)))
+               (unless (eq b :fail)
+                 (incf tried)
+                 (multiple-value-bind (d message)
+                     (blocker kb (rule-conditions rule) b 0)
+                   (declare (ignore d))
+                   (format stream "  rule ~(~a~) would conclude it, but ~a~%"
+                           (rule-name rule)
+                           (or message "its conditions hold (run forward-chain)"))))))
+           (when (zerop tried)
+             (format stream "  no rule concludes a fact of this shape, and it was not given.~%"))))))
+
+(defparameter *why-not-questions*
+  '((grandparent alice dave)
+    (grandparent alice carol)
+    (vacant lounge)
+    (flies penguin)))
+
+(defun run-whynot ()
+  (let ((kb (make-project-kb)))
+    (forward-chain kb)
+    (dolist (fact *why-not-questions*)
+      (why-not kb fact)
+      (terpri))
+    (values)))
+
+;;; Phase 2: proof trees as data
+
+(defun proof-tree (kb fact)
+  "A proof as plain data: (fact :given), (fact :absent) for a negation,
+(fact :unknown), or (fact :rule NAME CHILD...) with one child per support."
+  (let ((why (gethash fact (kb-why kb))))
+    (cond ((and (consp fact) (eq (first fact) 'not)) (list fact :absent))
+          ((null why) (list fact :unknown))
+          ((eq (first why) :given) (list fact :given))
+          (t (list* fact :rule (second why)
+                    (mapcar (lambda (s) (proof-tree kb s)) (third why)))))))
+
+(defun proof-size (tree)
+  "Number of nodes in a proof tree."
+  (1+ (reduce #'+ (mapcar #'proof-size (cdddr tree)))))
+
+(defun proof-leaves (tree)
+  "The given facts a proof rests on."
+  (if (eq (second tree) :rule)
+      (remove-duplicates (mapcan #'proof-leaves (copy-list (cdddr tree))) :test #'equal)
+      (and (eq (second tree) :given) (list (first tree)))))
+
+(defun run-proof ()
+  (let ((kb (make-project-kb)))
+    (forward-chain kb)
+    (dolist (fact '((grandparent alice carol) (suggest turn-off fan)))
+      (let ((tree (proof-tree kb fact)))
+        (format t "~a~%  tree: ~a~%  nodes: ~d~%  rests on: ~a~%~%"
+                (show fact) (show tree) (proof-size tree)
+                (show (proof-leaves tree)))))
+    (values)))
+
+;;; Phase 2: plain-English templates
+
+(defparameter *templates*
+  '(((parent ?a ?b)           ?a " is a parent of " ?b)
+    ((grandparent ?a ?b)      ?a " is a grandparent of " ?b)
+    ((sibling ?a ?b)          ?a " and " ?b " are siblings")
+    ((is-a ?a ?b)             ?a " is a kind of " ?b)
+    ((can ?a ?b)              ?a " can " ?b)
+    ((state ?d ?s)            "the " ?d " is " ?s)
+    ((at ?p ?r)               ?p " is in the " ?r)
+    ((vacant ?r)              "the " ?r " is empty")
+    ((suggest ?act ?x)        "I suggest: " ?act " the " ?x)
+    ((status ?c ?s)           "the " ?c " is " ?s))
+  "Each entry: a fact pattern, then strings and variables to join into a sentence.")
+
+(defun english (fact)
+  "A plain-English sentence for FACT, or its Lisp form if no template fits."
+  (dolist (entry *templates* (show fact))
+    (let ((b (match (first entry) fact)))
+      (unless (eq b :fail)
+        (return
+          (format nil "~{~a~}"
+                  (mapcar (lambda (part)
+                            (if (stringp part)
+                                part
+                                (string-downcase (show (substitute-bindings part b)))))
+                          (rest entry))))))))
+
+(defun english-proof (tree &optional (depth 0))
+  "Turn a proof-tree into indented plain-English lines (a string)."
+  (let ((pad (make-string (* 2 depth) :initial-element #\Space))
+        (fact (first tree)))
+    (with-output-to-string (out)
+      (case (second tree)
+        (:given (format out "~a~a (told to me)~%" pad (english fact)))
+        (:absent (format out "~anothing is known to say: ~a~%" pad
+                         (english (second fact))))
+        (:unknown (format out "~a~a (not known)~%" pad (english fact)))
+        (t (format out "~a~a, by rule ~(~a~), because:~%" pad (english fact) (third tree))
+           (dolist (child (cdddr tree))
+             (write-string (english-proof child (1+ depth)) out)))))))
+
+(defun run-english ()
+  (let ((kb (make-project-kb)))
+    (forward-chain kb)
+    (dolist (fact '((grandparent alice carol) (sibling bob erin) (vacant garage)))
+      (if (known-p kb fact)
+          (write-string (english-proof (proof-tree kb fact)))
+          (format t "~a (not known)~%" (english fact))))
+    (values)))
+
+;;; Phase 2: contradiction detection
+;;; Registry facts say what cannot both be true:
+;;;   (functional p)   a thing has at most one value: (p x a) and (p x b) clash when a differs from b
+;;;   (disjoint a b)   nothing is both (is-a x a) and (is-a x b)
+
+(defun find-contradictions (kb)
+  "A list of (fact1 fact2 reason) for facts that cannot both hold."
+  (let ((found '()))
+    (dolist (reg (gethash 'functional (kb-index kb)))
+      (let ((p (second reg)) (seen '()))
+        (dolist (f (gethash p (kb-index kb)))
+          (when (= (length f) 3)
+            (dolist (g seen)
+              (when (and (equal (second f) (second g))
+                         (not (equal (third f) (third g))))
+                (push (list g f (format nil "~(~a~) allows one value per thing" p))
+                      found)))
+            (push f seen)))))
+    (dolist (reg (gethash 'disjoint (kb-index kb)))
+      (dolist (f (gethash 'is-a (kb-index kb)))
+        (when (equal (third f) (second reg))
+          (let ((g (list 'is-a (second f) (third reg))))
+            (when (known-p kb g)
+              (push (list f g (format nil "~(~a~) and ~(~a~) exclude each other"
+                                      (second reg) (third reg)))
+                    found))))))
+    (nreverse found)))
+
+(defun report-contradictions (kb &optional (label "knowledge base"))
+  (let ((found (find-contradictions kb)))
+    (format t "Contradictions in the ~a: ~d~%" label (length found))
+    (dolist (c found)
+      (format t "  ~a  vs  ~a  (~a)~%" (english (first c)) (english (second c)) (third c)))))
+
+(defun run-contradictions ()
+  (let ((kb (make-project-kb)))
+    (forward-chain kb)
+    (report-contradictions kb "real knowledge base")
+    (let ((demo (make-kb)))
+      (dolist (f '((functional state) (functional at) (disjoint bird fish)
+                   (state fan on) (state fan off) (state lamp on)
+                   (at ana lounge) (at ana study)
+                   (is-a nemo fish) (is-a nemo bird) (is-a tweety bird)))
+        (add-fact demo f))
+      (terpri)
+      (report-contradictions demo "demo set"))
+    (values)))
 
 ;;; ======================================================================
 ;;; Evolution: one bounded step per run
@@ -1758,6 +1972,10 @@ in the SAI_PREDICATES environment variable (comma separated)."
   (let ((mode (or (sb-ext:posix-getenv "SAI_MODE") "demo")))
     (cond ((string= mode "demo") (run-demo))
           ((string= mode "facts") (run-facts))
+          ((string= mode "whynot") (run-whynot))
+          ((string= mode "proof") (run-proof))
+          ((string= mode "english") (run-english))
+          ((string= mode "contradictions") (run-contradictions))
           ((string= mode "load") nil)
           ((string= mode "validate") (run-validate))
           ((string= mode "evolve") (evolve-step nil))
