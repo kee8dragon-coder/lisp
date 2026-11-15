@@ -1438,18 +1438,6 @@ explained. Returns (values ok-p problems stats)."
           (explain kb (substitute-bindings pattern bindings) :depth 1)))
     (terpri)))
 
-(defun run-demo ()
-  (let ((kb (make-project-kb)))
-    (format t "Loaded ~d facts and ~d rules.~%"
-            (length (kb-facts kb)) (length (kb-rules kb)))
-    (multiple-value-bind (derived reason) (forward-chain kb)
-      (format t "Inference stopped: ~(~a~). ~d new facts derived.~%~%"
-              reason (length derived)))
-    (dolist (pattern *demo-questions*)
-      (print-answers kb pattern))
-    (what-if-retracted kb '(status network down))
-    (values)))
-
 (defun what-if-retracted (kb fact)
   "Show what would stop being true if the given FACT were retracted."
   (format t "What if ~a stopped being true?~%" (show fact))
@@ -1462,6 +1450,18 @@ explained. Returns (values ok-p problems stats)."
                (dolist (old gone)
                  (format t "  would no longer hold: ~a~%" (show old)))))))
   (terpri))
+
+(defun run-demo ()
+  (let ((kb (make-project-kb)))
+    (format t "Loaded ~d facts and ~d rules.~%"
+            (length (kb-facts kb)) (length (kb-rules kb)))
+    (multiple-value-bind (derived reason) (forward-chain kb)
+      (format t "Inference stopped: ~(~a~). ~d new facts derived.~%~%"
+              reason (length derived)))
+    (dolist (pattern *demo-questions*)
+      (print-answers kb pattern))
+    (what-if-retracted kb '(status network down))
+    (values)))
 
 ;;; Phase 2: "why not?" (explain a fact that is NOT known)
 
