@@ -1,8 +1,7 @@
 # Latest automation run
 
-### 2026-11-15 10:06 UTC - Applied a lesson
+### 2026-11-15 10:47 UTC - Lesson failed validation (change discarded)
 
-- Lesson: L095 - Subscription costs
-- Result: Validated: the knowledge base loaded in SBCL and inference reached a fixpoint.
-- Knowledge now: 118 rules, 359 given facts, 1028 facts after inference
+- Lesson: L096 - Library loans
+- Result: Rejected; change rolled back: Rule ON-SHELF-RULE: (not (borrowed-by ?b ?p)) uses variables no earlier condition binds: (?p)
 
