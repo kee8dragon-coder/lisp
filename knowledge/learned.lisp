@@ -753,3 +753,15 @@
 (fact (monthly-price video 15))
 (rule yearly-cost-rule (if (monthly-price ?s ?m) (mul ?m 12 ?y)) (then (yearly-cost ?s ?y)))
 (rule costly-subscription-rule (if (yearly-cost ?s ?y) (gt ?y 100)) (then (review-subscription ?s)))
+
+;; --- L097: Capitals and continents (applied 2026-11-15 11:23 UTC) ---
+;; Links capital cities to their countries and countries to continents, so each capital is placed on a continent.
+(fact (capital-of paris france))
+(fact (capital-of tokyo japan))
+(fact (capital-of cairo egypt))
+(fact (capital-of lima peru))
+(fact (country-in france europe))
+(fact (country-in japan asia))
+(fact (country-in egypt africa))
+(fact (country-in peru south-america))
+(rule capital-continent-rule (if (capital-of ?c ?n) (country-in ?n ?k)) (then (capital-in ?c ?k)))

@@ -1,7 +1,8 @@
 # Latest automation run
 
-### 2026-11-15 10:47 UTC - Lesson failed validation (change discarded)
+### 2026-11-15 11:23 UTC - Applied a lesson
 
-- Lesson: L096 - Library loans
-- Result: Rejected; change rolled back: Rule ON-SHELF-RULE: (not (borrowed-by ?b ?p)) uses variables no earlier condition binds: (?p)
+- Lesson: L097 - Capitals and continents
+- Result: Validated: the knowledge base loaded in SBCL and inference reached a fixpoint.
+- Knowledge now: 119 rules, 365 given facts, 1042 facts after inference
 
