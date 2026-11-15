@@ -1463,6 +1463,78 @@ explained. Returns (values ok-p problems stats)."
                  (format t "  would no longer hold: ~a~%" (show old)))))))
   (terpri))
 
+;;; Phase 2: "why not?" (explain a fact that is NOT known)
+
+(defun blocker (kb conditions bindings depth)
+  "Walk CONDITIONS in order. Returns (values depth message) for the furthest
+condition that cannot be satisfied, or NIL when every condition can be."
+  (if (null conditions)
+      nil
+      (let ((pattern (substitute-bindings (first conditions) bindings)))
+        (if (builtin-condition-p pattern)
+            (multiple-value-bind (ok new-bindings)
+                (eval-builtin kb pattern bindings '())
+              (if ok
+                  (blocker kb (rest conditions) new-bindings (1+ depth))
+                  (values depth
+                          (if (and (eq (first pattern) 'not)
+                                   (consp (second pattern))
+                                   (ground-p (second pattern))
+                                   (known-p kb (second pattern)))
+                              (format nil "~a is known, so the negated condition fails"
+                                      (show (second pattern)))
+                              (format nil "the test ~a does not hold" (show pattern))))))
+            (let ((best-depth -1) (best-message nil) (matched nil))
+              (dolist (fact (candidate-facts kb pattern))
+                (let ((b (match pattern fact bindings)))
+                  (unless (eq b :fail)
+                    (setf matched t)
+                    (multiple-value-bind (d m)
+                        (blocker kb (rest conditions) b (1+ depth))
+                      (when (null d) (return-from blocker nil))
+                      (when (> d best-depth)
+                        (setf best-depth d best-message m))))))
+              (if matched
+                  (values best-depth best-message)
+                  (values depth
+                          (format nil "no known fact matches ~a" (show pattern)))))))))
+
+(defun why-not (kb fact &key (stream *standard-output*))
+  "Print why the ground FACT is not known: for each rule that could conclude
+it, the first condition that fails."
+  (cond ((known-p kb fact)
+         (format stream "~a IS known:~%" (show fact))
+         (explain kb fact :stream stream :depth 1))
+        (t
+         (format stream "~a is not known.~%" (show fact))
+         (let ((tried 0))
+           (dolist (rule (kb-rules kb))
+             (let ((b (match (rule-conclusion rule) fact)))
+               (unless (eq b :fail)
+                 (incf tried)
+                 (multiple-value-bind (d message)
+                     (blocker kb (rule-conditions rule) b 0)
+                   (declare (ignore d))
+                   (format stream "  rule ~(~a~) would conclude it, but ~a~%"
+                           (rule-name rule)
+                           (or message "its conditions hold (run forward-chain)"))))))
+           (when (zerop tried)
+             (format stream "  no rule concludes a fact of this shape, and it was not given.~%"))))))
+
+(defparameter *why-not-questions*
+  '((grandparent alice dave)
+    (grandparent alice carol)
+    (vacant lounge)
+    (flies penguin)))
+
+(defun run-whynot ()
+  (let ((kb (make-project-kb)))
+    (forward-chain kb)
+    (dolist (fact *why-not-questions*)
+      (why-not kb fact)
+      (terpri))
+    (values)))
+
 ;;; ======================================================================
 ;;; Evolution: one bounded step per run
 ;;; Writes only: knowledge/learned.lisp, PROGRESS.md, progress/*
@@ -1758,6 +1830,7 @@ in the SAI_PREDICATES environment variable (comma separated)."
   (let ((mode (or (sb-ext:posix-getenv "SAI_MODE") "demo")))
     (cond ((string= mode "demo") (run-demo))
           ((string= mode "facts") (run-facts))
+          ((string= mode "whynot") (run-whynot))
           ((string= mode "load") nil)
           ((string= mode "validate") (run-validate))
           ((string= mode "evolve") (evolve-step nil))

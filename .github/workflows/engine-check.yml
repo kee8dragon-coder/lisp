@@ -86,6 +86,13 @@ jobs:
           set -o pipefail
           sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp 2>&1 | tee /tmp/facts.txt
 
+      - name: Why not (Phase 2)
+        env:
+          SAI_MODE: whynot
+        run: |
+          set -o pipefail
+          sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp 2>&1 | tee /tmp/whynot.txt
+
       - name: Summary
         if: always()
         run: |
@@ -108,3 +115,4 @@ jobs:
           emit "lessons" /tmp/lessons.txt
           emit "facts" /tmp/facts.txt
           emit "demo" /tmp/demo.txt
+          emit "whynot" /tmp/whynot.txt
