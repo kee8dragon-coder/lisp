@@ -81,7 +81,7 @@ jobs:
       - name: Derived facts for the assistant predicates
         env:
           SAI_MODE: facts
-          SAI_PREDICATES: suggest,alert,empty-room,open-task,blocked,ready,overlaps,ends,too-cold,days-left,due-soon,past-due,remaining,over-budget,unreported,no-access,unassigned,tick,square,peers,lit,degraded,failing,permitted,clash
+          SAI_PREDICATES: vacant,childless,founder,no-meetings,flightless,missing-ingredient,shopping-item,heavy-meal,thirsty,low-fuel,review-subscription,on-shelf,overdue,return-soon,capital-in,lighter,hours-difference,ahead-of,urgent,passed,failed,distinction,high-energy,opposite,quiet-time,suggest,alert,empty-room,open-task,blocked,ready,overlaps,ends,too-cold,days-left,due-soon,past-due,remaining,over-budget,unreported,no-access,unassigned,tick,square,peers,lit,degraded,failing,permitted,clash
         run: |
           set -o pipefail
           sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp 2>&1 | tee /tmp/facts.txt
