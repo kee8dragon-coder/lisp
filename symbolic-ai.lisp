@@ -1567,6 +1567,57 @@ it, the first condition that fails."
                 (show (proof-leaves tree)))))
     (values)))
 
+;;; Phase 2: plain-English templates
+
+(defparameter *templates*
+  '(((parent ?a ?b)           ?a " is a parent of " ?b)
+    ((grandparent ?a ?b)      ?a " is a grandparent of " ?b)
+    ((sibling ?a ?b)          ?a " and " ?b " are siblings")
+    ((is-a ?a ?b)             ?a " is a kind of " ?b)
+    ((can ?a ?b)              ?a " can " ?b)
+    ((state ?d ?s)            "the " ?d " is " ?s)
+    ((at ?p ?r)               ?p " is in the " ?r)
+    ((vacant ?r)              "the " ?r " is empty")
+    ((suggest ?act ?x)        "I suggest: " ?act " the " ?x)
+    ((status ?c ?s)           "the " ?c " is " ?s))
+  "Each entry: a fact pattern, then strings and variables to join into a sentence.")
+
+(defun english (fact)
+  "A plain-English sentence for FACT, or its Lisp form if no template fits."
+  (dolist (entry *templates* (show fact))
+    (let ((b (match (first entry) fact)))
+      (unless (eq b :fail)
+        (return
+          (format nil "~{~a~}"
+                  (mapcar (lambda (part)
+                            (if (stringp part)
+                                part
+                                (string-downcase (show (substitute-bindings part b)))))
+                          (rest entry))))))))
+
+(defun english-proof (tree &optional (depth 0))
+  "Turn a proof-tree into indented plain-English lines (a string)."
+  (let ((pad (make-string (* 2 depth) :initial-element #\Space))
+        (fact (first tree)))
+    (with-output-to-string (out)
+      (case (second tree)
+        (:given (format out "~a~a (told to me)~%" pad (english fact)))
+        (:absent (format out "~anothing is known to say: ~a~%" pad
+                         (english (second fact))))
+        (:unknown (format out "~a~a (not known)~%" pad (english fact)))
+        (t (format out "~a~a, by rule ~(~a~), because:~%" pad (english fact) (third tree))
+           (dolist (child (cdddr tree))
+             (write-string (english-proof child (1+ depth)) out)))))))
+
+(defun run-english ()
+  (let ((kb (make-project-kb)))
+    (forward-chain kb)
+    (dolist (fact '((grandparent alice carol) (sibling bob erin) (vacant garage)))
+      (if (known-p kb fact)
+          (write-string (english-proof (proof-tree kb fact)))
+          (format t "~a (not known)~%" (english fact))))
+    (values)))
+
 ;;; ======================================================================
 ;;; Evolution: one bounded step per run
 ;;; Writes only: knowledge/learned.lisp, PROGRESS.md, progress/*
@@ -1864,6 +1915,7 @@ in the SAI_PREDICATES environment variable (comma separated)."
           ((string= mode "facts") (run-facts))
           ((string= mode "whynot") (run-whynot))
           ((string= mode "proof") (run-proof))
+          ((string= mode "english") (run-english))
           ((string= mode "load") nil)
           ((string= mode "validate") (run-validate))
           ((string= mode "evolve") (evolve-step nil))

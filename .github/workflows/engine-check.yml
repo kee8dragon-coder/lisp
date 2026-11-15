@@ -100,6 +100,13 @@ jobs:
           set -o pipefail
           sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp 2>&1 | tee /tmp/proof.txt
 
+      - name: Plain English (Phase 2)
+        env:
+          SAI_MODE: english
+        run: |
+          set -o pipefail
+          sbcl --noinform --non-interactive --no-userinit --load symbolic-ai.lisp 2>&1 | tee /tmp/english.txt
+
       - name: Summary
         if: always()
         run: |
@@ -124,3 +131,4 @@ jobs:
           emit "demo" /tmp/demo.txt
           emit "whynot" /tmp/whynot.txt
           emit "proof" /tmp/proof.txt
+          emit "english" /tmp/english.txt
