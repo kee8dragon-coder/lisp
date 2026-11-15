@@ -6,7 +6,8 @@ on:
   workflow_dispatch:        # manual runs always allowed
 
 permissions:
-  contents: write           # push to the autoevolve branch; nothing else
+  contents: write           # push to the autoevolve branch
+  issues: write             # open one issue when the lessons run out (this emails the owner)
 
 concurrency:
   group: autoevolve         # one run at a time; a waiting run never cancels a running one
@@ -111,6 +112,20 @@ jobs:
             echo "repeat=true" >> "$GITHUB_OUTPUT"
           else
             echo "repeat=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Notify the owner when the lessons run out
+        if: steps.final.outputs.status == 'noop' && steps.final.outputs.repeat != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          title="autoevolve: out of lessons"
+          open="$(gh issue list --repo "$REPO" --state open --search "\"$title\" in:title" --json number --jq length || echo 0)"
+          if [ "$open" = "0" ]; then
+            gh issue create --repo "$REPO" --title "$title" \
+              --body "The scheduled run found no lessons left to apply. Ask Claude for a new batch of lessons, add them to symbolic-ai.lisp on the default branch, and close this issue. Details are in PROGRESS.md on the autoevolve branch."
           fi
 
       - name: Write job summary

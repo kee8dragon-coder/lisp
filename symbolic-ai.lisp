@@ -249,6 +249,11 @@ symbol, otherwise every fact."
       (gethash (first pattern) (kb-index kb))
       (kb-facts kb)))
 
+(defun any-match-p (kb pattern)
+  "True when some known fact matches PATTERN; unbound variables act as wildcards."
+  (some (lambda (fact) (not (eq (match pattern fact (quote ())) :fail)))
+        (candidate-facts kb pattern)))
+
 (defun eval-builtin (kb pattern bindings support)
   "Evaluate a built-in condition (variables already substituted).
 Returns (values ok bindings support)."
@@ -281,7 +286,7 @@ Returns (values ok bindings support)."
              (values nil bindings support))))
       (not
        (let ((inner (second pattern)))
-         (if (and (consp inner) (ground-p inner) (not (known-p kb inner)))
+         (if (and (consp inner) (not (any-match-p kb inner)))
              (values t bindings (cons pattern support))
              (values nil bindings support))))
       (t (values nil bindings support)))))
@@ -338,7 +343,7 @@ Returns (values new-facts reason): :fixpoint, :round-limit or :fact-limit."
                  (dolist (support (third why))
                    (when (and (consp support)
                               (eq (first support) 'not)
-                              (known-p kb (second support)))
+                              (any-match-p kb (second support)))
                      (push fact bad)))))
              (kb-why kb))
     bad))
@@ -1379,7 +1384,217 @@ Returns the facts that disappeared, or NIL if FACT is not a given fact."
                (then (chore-assigned ?c)))
              (rule unassigned-chore-rule
                (if (chore ?c) (not (chore-assigned ?c)))
-               (then (unassigned ?c)))))))
+               (then (unassigned ?c)))))
+
+    ;; ---- Batch 4: guardrails, home and everyday reasoning (L090-L105) ----
+
+    (:id "L090" :title "Guardrails for contradictions"
+     :why "Declares that a device or person has only one state or place at a time, so find-contradictions can flag clashes."
+     :forms ((fact (functional state))
+             (fact (functional at))
+             (fact (functional power-watts))))
+
+    (:id "L091" :title "Recipes and the pantry"
+     :why "Recipes list ingredients; anything not in the pantry is missing and goes on the shopping list."
+     :forms ((fact (recipe pasta))
+             (fact (recipe omelette))
+             (fact (ingredient pasta noodles))
+             (fact (ingredient pasta sauce))
+             (fact (ingredient omelette eggs))
+             (fact (in-pantry noodles))
+             (fact (in-pantry eggs))
+             (rule missing-ingredient-rule
+               (if (recipe ?r) (ingredient ?r ?i) (not (in-pantry ?i)))
+               (then (missing-ingredient ?r ?i)))
+             (rule shopping-list-rule
+               (if (missing-ingredient ?r ?i))
+               (then (shopping-item ?i)))))
+
+    (:id "L092" :title "Meal calories"
+     :why "Adds up the calories of the two parts of a meal and flags heavy meals over 400."
+     :forms ((fact (meal pasta-dinner noodles sauce))
+             (fact (meal egg-lunch eggs toast))
+             (fact (calories noodles 350))
+             (fact (calories sauce 120))
+             (fact (calories eggs 140))
+             (fact (calories toast 90))
+             (rule meal-calories-rule
+               (if (meal ?m ?a ?b) (calories ?a ?x) (calories ?b ?y) (add ?x ?y ?t))
+               (then (meal-calories ?m ?t)))
+             (rule heavy-meal-rule
+               (if (meal-calories ?m ?t) (gt ?t 400))
+               (then (heavy-meal ?m)))))
+
+    (:id "L093" :title "Plant watering"
+     :why "A plant is thirsty when the days since it was watered reach its watering interval."
+     :forms ((fact (water-every fern 3))
+             (fact (water-every cactus 14))
+             (fact (days-since-watered fern 4))
+             (fact (days-since-watered cactus 5))
+             (rule thirsty-plant-rule
+               (if (days-since-watered ?p ?d) (water-every ?p ?n) (ge ?d ?n))
+               (then (thirsty ?p)))
+             (rule water-suggestion-rule
+               (if (thirsty ?p))
+               (then (suggest water ?p)))))
+
+    (:id "L094" :title "Fuel and range"
+     :why "A vehicle below the fuel threshold needs refuelling."
+     :forms ((fact (fuel-percent car 18))
+             (fact (fuel-percent scooter 70))
+             (fact (fuel-low-below 25))
+             (rule low-fuel-rule
+               (if (fuel-percent ?v ?p) (fuel-low-below ?t) (lt ?p ?t))
+               (then (low-fuel ?v)))
+             (rule refuel-suggestion-rule
+               (if (low-fuel ?v))
+               (then (suggest refuel ?v)))))
+
+    (:id "L095" :title "Subscription costs"
+     :why "Monthly prices times twelve give a yearly cost; yearly costs over 100 are flagged for review."
+     :forms ((fact (monthly-price music 10))
+             (fact (monthly-price news 3))
+             (fact (monthly-price video 15))
+             (rule yearly-cost-rule
+               (if (monthly-price ?s ?m) (mul ?m 12 ?y))
+               (then (yearly-cost ?s ?y)))
+             (rule costly-subscription-rule
+               (if (yearly-cost ?s ?y) (gt ?y 100))
+               (then (review-subscription ?s)))))
+
+    (:id "L096" :title "Library loans"
+     :why "Books not on loan are on the shelf; loans with days left below zero are overdue and those due within two days should be returned soon."
+     :forms ((fact (book dune))
+             (fact (book emma))
+             (fact (book ulysses))
+             (fact (borrowed-by dune ana))
+             (fact (borrowed-by emma ben))
+             (fact (due-in dune -1))
+             (fact (due-in emma 2))
+             (rule on-shelf-rule
+               (if (book ?b) (not (borrowed-by ?b ?p)))
+               (then (on-shelf ?b)))
+             (rule overdue-book-rule
+               (if (due-in ?b ?d) (lt ?d 0))
+               (then (overdue ?b)))
+             (rule return-soon-rule
+               (if (due-in ?b ?d) (ge ?d 0) (le ?d 2))
+               (then (return-soon ?b)))))
+
+    (:id "L097" :title "Capitals and continents"
+     :why "Links capital cities to their countries and countries to continents, so each capital is placed on a continent."
+     :forms ((fact (capital-of paris france))
+             (fact (capital-of tokyo japan))
+             (fact (capital-of cairo egypt))
+             (fact (capital-of lima peru))
+             (fact (country-in france europe))
+             (fact (country-in japan asia))
+             (fact (country-in egypt africa))
+             (fact (country-in peru south-america))
+             (rule capital-continent-rule
+               (if (capital-of ?c ?n) (country-in ?n ?k))
+               (then (capital-in ?c ?k)))))
+
+    (:id "L098" :title "Colour mixing"
+     :why "Mixing colours works in either order."
+     :forms ((fact (mix red blue purple))
+             (fact (mix red yellow orange))
+             (fact (mix blue yellow green))
+             (rule mix-symmetric-rule
+               (if (mix ?a ?b ?c))
+               (then (mix ?b ?a ?c)))))
+
+    (:id "L099" :title "Lighter elements"
+     :why "Elements have atomic numbers; one is lighter than another when its number is smaller."
+     :forms ((fact (atomic-number hydrogen 1))
+             (fact (atomic-number helium 2))
+             (fact (atomic-number carbon 6))
+             (fact (atomic-number oxygen 8))
+             (fact (atomic-number iron 26))
+             (rule lighter-rule
+               (if (atomic-number ?a ?n) (atomic-number ?b ?m) (lt ?n ?m))
+               (then (lighter ?a ?b)))))
+
+    (:id "L100" :title "Time zones"
+     :why "Offsets from UTC give how many hours one city is ahead of another."
+     :forms ((fact (utc-offset singapore 8))
+             (fact (utc-offset london 0))
+             (fact (utc-offset new-york -5))
+             (rule hours-ahead-rule
+               (if (utc-offset ?a ?x) (utc-offset ?b ?y) (different ?a ?b) (sub ?x ?y ?d))
+               (then (hours-difference ?a ?b ?d)))
+             (rule ahead-of-rule
+               (if (hours-difference ?a ?b ?d) (gt ?d 0))
+               (then (ahead-of ?a ?b)))))
+
+    (:id "L101" :title "Urgent to-dos"
+     :why "To-dos carry a priority from 1 to 5; priority 4 or more is urgent and gets a reminder."
+     :forms ((fact (todo write-report))
+             (fact (todo water-garden))
+             (fact (todo book-flights))
+             (fact (priority write-report 5))
+             (fact (priority water-garden 2))
+             (fact (priority book-flights 4))
+             (rule urgent-todo-rule
+               (if (todo ?t) (priority ?t ?p) (ge ?p 4))
+               (then (urgent ?t)))
+             (rule urgent-reminder-rule
+               (if (urgent ?t))
+               (then (suggest remind ?t)))))
+
+    (:id "L102" :title "Grades"
+     :why "Scores out of 100: 80 or more is a distinction, 50 or more passes, below 50 fails."
+     :forms ((fact (score ana 85))
+             (fact (score ben 62))
+             (fact (score cai 41))
+             (rule distinction-rule
+               (if (score ?p ?s) (ge ?s 80))
+               (then (distinction ?p)))
+             (rule pass-rule
+               (if (score ?p ?s) (ge ?s 50))
+               (then (passed ?p)))
+             (rule fail-rule
+               (if (score ?p ?s) (lt ?s 50))
+               (then (failed ?p)))))
+
+    (:id "L103" :title "Appliance energy use"
+     :why "Watts times hours gives watt-hours used today; anything over 5000 is a high energy user."
+     :forms ((fact (power-watts heater 2000))
+             (fact (power-watts lamp 10))
+             (fact (hours-today heater 3))
+             (fact (hours-today lamp 5))
+             (rule energy-today-rule
+               (if (power-watts ?d ?w) (hours-today ?d ?h) (mul ?w ?h ?e))
+               (then (watt-hours ?d ?e)))
+             (rule high-energy-rule
+               (if (watt-hours ?d ?e) (gt ?e 5000))
+               (then (high-energy ?d)))))
+
+    (:id "L104" :title "Compass turns"
+     :why "Turning right steps around the compass; turning left is the reverse, and two right turns face the opposite way."
+     :forms ((fact (turn-right north east))
+             (fact (turn-right east south))
+             (fact (turn-right south west))
+             (fact (turn-right west north))
+             (rule turn-left-rule
+               (if (turn-right ?a ?b))
+               (then (turn-left ?b ?a)))
+             (rule opposite-direction-rule
+               (if (turn-right ?a ?b) (turn-right ?b ?c))
+               (then (opposite ?a ?c)))))
+
+    (:id "L105" :title "Quiet hours"
+     :why "Hours 22 to 6 are quiet; any noisy device switched on during a quiet hour should be turned off."
+     :forms ((fact (current-hour 23))
+             (fact (quiet-from 22))
+             (fact (noisy dishwasher))
+             (fact (noisy speaker))
+             (rule quiet-time-rule
+               (if (current-hour ?h) (quiet-from ?q) (ge ?h ?q))
+               (then (quiet-time now)))
+             (rule quiet-suggestion-rule
+               (if (quiet-time now) (noisy ?d) (state ?d on))
+               (then (suggest turn-off ?d)))))))
 
 ;;; ======================================================================
 ;;; Validation
