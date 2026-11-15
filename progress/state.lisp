@@ -7,8 +7,10 @@
   "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068" "L069" "L070"
   "L071" "L072" "L073" "L074" "L075" "L076" "L077" "L078" "L079" "L080" "L081" "L082" "L083" "L084"
   "L085" "L086" "L087" "L088" "L089" "L090" "L091" "L092" "L093" "L094" "L095" "L097")
- :FAILED ("L096") :RUNS 99 :LOG
- ((:TIME "2026-11-15 11:23 UTC" :STATUS :APPLIED :LESSON "L097" :TITLE "Capitals and continents"
+ :FAILED ("L096" "L098") :RUNS 100 :LOG
+ ((:TIME "2026-11-15 12:02 UTC" :STATUS :FAILED :LESSON "L098" :TITLE "Colour mixing" :NOTE
+   "Rejected; change rolled back: Duplicate rule name: MIX-SYMMETRIC-RULE" :STATS NIL)
+  (:TIME "2026-11-15 11:23 UTC" :STATUS :APPLIED :LESSON "L097" :TITLE "Capitals and continents"
    :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 119 :GIVEN 365 :TOTAL 1042))
   (:TIME "2026-11-15 10:47 UTC" :STATUS :FAILED :LESSON "L096" :TITLE "Library loans" :NOTE
@@ -95,7 +97,4 @@
    (:RULES 80 :GIVEN 267 :TOTAL 832))
   (:TIME "2026-10-18 15:06 UTC" :STATUS :NOOP :LESSON NIL :TITLE NIL :NOTE
    "Every lesson has been applied or skipped. Add lessons to *lessons* in symbolic-ai.lisp." :STATS
-   (:RULES 79 :GIVEN 264 :TOTAL 828))
-  (:TIME "2026-10-18 14:47 UTC" :STATUS :APPLIED :LESSON "L070" :TITLE "Habitats" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 79 :GIVEN 264 :TOTAL 828))))
