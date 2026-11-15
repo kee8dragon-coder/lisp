@@ -6,9 +6,12 @@
   "L043" "L044" "L045" "L046" "L047" "L048" "L049" "L050" "L051" "L052" "L053" "L054" "L055" "L056"
   "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068" "L069" "L070"
   "L071" "L072" "L073" "L074" "L075" "L076" "L077" "L078" "L079" "L080" "L081" "L082" "L083" "L084"
-  "L085" "L086" "L087" "L088" "L089" "L090" "L091")
- :FAILED NIL :RUNS 93 :LOG
- ((:TIME "2026-11-15 06:39 UTC" :STATUS :APPLIED :LESSON "L091" :TITLE "Recipes and the pantry"
+  "L085" "L086" "L087" "L088" "L089" "L090" "L091" "L092")
+ :FAILED NIL :RUNS 94 :LOG
+ ((:TIME "2026-11-15 07:45 UTC" :STATUS :APPLIED :LESSON "L092" :TITLE "Meal calories" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 112 :GIVEN 349 :TOTAL 1009))
+  (:TIME "2026-11-15 06:39 UTC" :STATUS :APPLIED :LESSON "L091" :TITLE "Recipes and the pantry"
    :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 110 :GIVEN 343 :TOTAL 1000))
   (:TIME "2026-11-15 05:49 UTC" :STATUS :APPLIED :LESSON "L090" :TITLE
@@ -95,7 +98,4 @@
    (:RULES 76 :GIVEN 246 :TOTAL 791))
   (:TIME "2026-10-18 12:33 UTC" :STATUS :APPLIED :LESSON "L065" :TITLE "Kinds of number" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 76 :GIVEN 236 :TOTAL 766))
-  (:TIME "2026-10-18 12:03 UTC" :STATUS :APPLIED :LESSON "L064" :TITLE "Solar system" :NOTE
-   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 76 :GIVEN 232 :TOTAL 756))))
+   (:RULES 76 :GIVEN 236 :TOTAL 766))))

@@ -717,3 +717,14 @@
 (fact (in-pantry eggs))
 (rule missing-ingredient-rule (if (recipe ?r) (ingredient ?r ?i) (not (in-pantry ?i))) (then (missing-ingredient ?r ?i)))
 (rule shopping-list-rule (if (missing-ingredient ?r ?i)) (then (shopping-item ?i)))
+
+;; --- L092: Meal calories (applied 2026-11-15 07:45 UTC) ---
+;; Adds up the calories of the two parts of a meal and flags heavy meals over 400.
+(fact (meal pasta-dinner noodles sauce))
+(fact (meal egg-lunch eggs toast))
+(fact (calories noodles 350))
+(fact (calories sauce 120))
+(fact (calories eggs 140))
+(fact (calories toast 90))
+(rule meal-calories-rule (if (meal ?m ?a ?b) (calories ?a ?x) (calories ?b ?y) (add ?x ?y ?t)) (then (meal-calories ?m ?t)))
+(rule heavy-meal-rule (if (meal-calories ?m ?t) (gt ?t 400)) (then (heavy-meal ?m)))
