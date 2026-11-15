@@ -782,3 +782,14 @@
 (fact (utc-offset new-york -5))
 (rule hours-ahead-rule (if (utc-offset ?a ?x) (utc-offset ?b ?y) (different ?a ?b) (sub ?x ?y ?d)) (then (hours-difference ?a ?b ?d)))
 (rule ahead-of-rule (if (hours-difference ?a ?b ?d) (gt ?d 0)) (then (ahead-of ?a ?b)))
+
+;; --- L101: Urgent to-dos (applied 2026-11-15 23:22 UTC) ---
+;; To-dos carry a priority from 1 to 5; priority 4 or more is urgent and gets a reminder.
+(fact (todo write-report))
+(fact (todo water-garden))
+(fact (todo book-flights))
+(fact (priority write-report 5))
+(fact (priority water-garden 2))
+(fact (priority book-flights 4))
+(rule urgent-todo-rule (if (todo ?t) (priority ?t ?p) (ge ?p 4)) (then (urgent ?t)))
+(rule urgent-reminder-rule (if (urgent ?t)) (then (suggest remind ?t)))
