@@ -793,3 +793,12 @@
 (fact (priority book-flights 4))
 (rule urgent-todo-rule (if (todo ?t) (priority ?t ?p) (ge ?p 4)) (then (urgent ?t)))
 (rule urgent-reminder-rule (if (urgent ?t)) (then (suggest remind ?t)))
+
+;; --- L102: Grades (applied 2026-11-16 02:53 UTC) ---
+;; Scores out of 100: 80 or more is a distinction, 50 or more passes, below 50 fails.
+(fact (score ana 85))
+(fact (score ben 62))
+(fact (score cai 41))
+(rule distinction-rule (if (score ?p ?s) (ge ?s 80)) (then (distinction ?p)))
+(rule pass-rule (if (score ?p ?s) (ge ?s 50)) (then (passed ?p)))
+(rule fail-rule (if (score ?p ?s) (lt ?s 50)) (then (failed ?p)))

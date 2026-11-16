@@ -7,9 +7,12 @@
   "L057" "L058" "L059" "L060" "L061" "L062" "L063" "L064" "L065" "L066" "L067" "L068" "L069" "L070"
   "L071" "L072" "L073" "L074" "L075" "L076" "L077" "L078" "L079" "L080" "L081" "L082" "L083" "L084"
   "L085" "L086" "L087" "L088" "L089" "L090" "L091" "L092" "L093" "L094" "L095" "L097" "L099" "L100"
-  "L101")
- :FAILED ("L096" "L098") :RUNS 103 :LOG
- ((:TIME "2026-11-15 23:22 UTC" :STATUS :APPLIED :LESSON "L101" :TITLE "Urgent to-dos" :NOTE
+  "L101" "L102")
+ :FAILED ("L096" "L098") :RUNS 104 :LOG
+ ((:TIME "2026-11-16 02:53 UTC" :STATUS :APPLIED :LESSON "L102" :TITLE "Grades" :NOTE
+   "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
+   (:RULES 127 :GIVEN 382 :TOTAL 1087))
+  (:TIME "2026-11-15 23:22 UTC" :STATUS :APPLIED :LESSON "L101" :TITLE "Urgent to-dos" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
    (:RULES 124 :GIVEN 379 :TOTAL 1080))
   (:TIME "2026-11-15 19:09 UTC" :STATUS :APPLIED :LESSON "L100" :TITLE "Time zones" :NOTE
@@ -95,7 +98,4 @@
    (:RULES 84 :GIVEN 276 :TOTAL 851))
   (:TIME "2026-10-23 09:09 UTC" :STATUS :APPLIED :LESSON "L074" :TITLE "Event times" :NOTE
    "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 83 :GIVEN 276 :TOTAL 849))
-  (:TIME "2026-10-23 08:32 UTC" :STATUS :APPLIED :LESSON "L073" :TITLE "Unattended appliances"
-   :NOTE "Validated: the knowledge base loaded in SBCL and inference reached a fixpoint." :STATS
-   (:RULES 82 :GIVEN 270 :TOTAL 840))))
+   (:RULES 83 :GIVEN 276 :TOTAL 849))))
