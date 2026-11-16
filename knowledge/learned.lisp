@@ -811,3 +811,12 @@
 (fact (hours-today lamp 5))
 (rule energy-today-rule (if (power-watts ?d ?w) (hours-today ?d ?h) (mul ?w ?h ?e)) (then (watt-hours ?d ?e)))
 (rule high-energy-rule (if (watt-hours ?d ?e) (gt ?e 5000)) (then (high-energy ?d)))
+
+;; --- L104: Compass turns (applied 2026-11-16 20:31 UTC) ---
+;; Turning right steps around the compass; turning left is the reverse, and two right turns face the opposite way.
+(fact (turn-right north east))
+(fact (turn-right east south))
+(fact (turn-right south west))
+(fact (turn-right west north))
+(rule turn-left-rule (if (turn-right ?a ?b)) (then (turn-left ?b ?a)))
+(rule opposite-direction-rule (if (turn-right ?a ?b) (turn-right ?b ?c)) (then (opposite ?a ?c)))
