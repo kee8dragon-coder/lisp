@@ -802,3 +802,12 @@
 (rule distinction-rule (if (score ?p ?s) (ge ?s 80)) (then (distinction ?p)))
 (rule pass-rule (if (score ?p ?s) (ge ?s 50)) (then (passed ?p)))
 (rule fail-rule (if (score ?p ?s) (lt ?s 50)) (then (failed ?p)))
+
+;; --- L103: Appliance energy use (applied 2026-11-16 10:16 UTC) ---
+;; Watts times hours gives watt-hours used today; anything over 5000 is a high energy user.
+(fact (power-watts heater 2000))
+(fact (power-watts lamp 10))
+(fact (hours-today heater 3))
+(fact (hours-today lamp 5))
+(rule energy-today-rule (if (power-watts ?d ?w) (hours-today ?d ?h) (mul ?w ?h ?e)) (then (watt-hours ?d ?e)))
+(rule high-energy-rule (if (watt-hours ?d ?e) (gt ?e 5000)) (then (high-energy ?d)))
