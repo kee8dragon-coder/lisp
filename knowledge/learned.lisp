@@ -820,3 +820,12 @@
 (fact (turn-right west north))
 (rule turn-left-rule (if (turn-right ?a ?b)) (then (turn-left ?b ?a)))
 (rule opposite-direction-rule (if (turn-right ?a ?b) (turn-right ?b ?c)) (then (opposite ?a ?c)))
+
+;; --- L105: Quiet hours (applied 2026-11-17 03:05 UTC) ---
+;; Hours 22 to 6 are quiet; any noisy device switched on during a quiet hour should be turned off.
+(fact (current-hour 23))
+(fact (quiet-from 22))
+(fact (noisy dishwasher))
+(fact (noisy speaker))
+(rule quiet-time-rule (if (current-hour ?h) (quiet-from ?q) (ge ?h ?q)) (then (quiet-time now)))
+(rule quiet-suggestion-rule (if (quiet-time now) (noisy ?d) (state ?d on)) (then (suggest turn-off ?d)))
